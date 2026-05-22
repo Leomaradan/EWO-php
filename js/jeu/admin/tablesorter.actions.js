@@ -1,13 +1,13 @@
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     "use strict";
     jQuery.tablesorter.addParser({
         // set a unique id 
         id: 'cercles',
-        is: function(s) {
+        is: function (s) {
             // return false so this parser is not auto detected 
             return false;
         },
-        format: function(s) {
+        format: function (s) {
             // format your data for normalization 
             return s.toLowerCase().replace(/techno/, 7).replace(/paria/, 6).replace(/soin/, 5).replace(/effrois/, 4).replace(/et/, 3).replace(/glace/, 2).replace(/feu/, 1).replace(/novice/, 0);
         },
@@ -37,7 +37,7 @@ jQuery(document).ready(function() {
         size: 25,
         positionFixed: false
     });
-    jQuery(".delete").click(function() {
+    jQuery(".delete").click(function () {
         if (!confirm("Voulez-vous vraiment supprimer cette action ?")) {
             return false;
         }

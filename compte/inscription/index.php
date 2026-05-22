@@ -1,6 +1,5 @@
 <?php
 
-namespace compte\inscription;
 /**
  * Inscription - Page du formulaire d'inscription
  *
@@ -11,6 +10,8 @@ namespace compte\inscription;
  * @package inscription
  */
 
+namespace compte\inscription;
+
 //-- Header --
 require_once __DIR__ . '/../../conf/master.php';
 
@@ -20,22 +21,20 @@ include(SERVER_ROOT . "/template/header_new.php");
 //------------
 
 
-$ouverture = mktime (13, 03, 13, 3, 13, 2013);
+$ouverture = mktime(13, 03, 13, 3, 13, 2013);
 
-if($ouverture > time()) {
-
+if ($ouverture > time()) {
     echo "<h2>C'est pas encore l'heure, et t'as pas une tête de magicien</h2>
         <h3>(qui, lui, est précisément à l'heure voulue)</h3>";
-    
+
     session_destroy();
     //-- Footer --
     include(SERVER_ROOT . "/template/footer_new.php");
     exit;
-
 }
 
-if(isset($_SESSION['temp']['error'])){
-	$msg_error = $_SESSION['temp']['error'];
+if (isset($_SESSION['temp']['error'])) {
+    $msg_error = $_SESSION['temp']['error'];
 }
 
 ?>
@@ -45,77 +44,99 @@ if(isset($_SESSION['temp']['error'])){
 
 <!-- Debut du coin -->
 <div>
-			<!-- conteneur -->		
-	
-			
+            <!-- conteneur -->      
+    
+            
 <table border="0">
-	<tr>
-	<td width='450' align='center'>
-		<form name='err' action="ControllerInscription.php" method="post">
-		<table border="0" width="100%">
-			<tr>
-				<td></td>
-				<td <?php if(isset($msg_error)){ echo "style='background-color:#FFB89F;'>$msg_error"; } ?>></td>
-				<td></td>
-			</tr>	
-			<tr>
-				<td colspan="3">&nbsp;</td>
-			</tr>
-			<tr>
-				<th scope="row" align="right">Nom du compte : </th>
-				<td align="center"><input name="nom" type="text" maxlength="64" value="<?php if(isset($_SESSION['temp']['nom'])){ echo $_SESSION['temp']['nom']; }else{ echo '';} ?>"/></td>
-			<td></td>
-			</tr>
-			<tr>
-				<td colspan="3">&nbsp;</td>
-			</tr>
-			<tr>
-				<th scope="row" align="right">E-Mail : </th>
-				<td align="center"><input name="email" type="text" maxlength="64" value="<?php if(isset($_SESSION['temp']['mail'])){ echo $_SESSION['temp']['mail']; }else{ echo '';} ?>"/></td>
-			<td></td>
-			</tr>
-			<tr>
-				<td colspan="3">&nbsp;</td>
-			</tr>
-			<tr>
-				<th scope="row" align="right">Mot de passe : </th>
-				<td align="center"><input name="pass_inscription" type="password" maxlength="64" value="<?php if(isset($_SESSION['temp']['pass'])){ echo $_SESSION['temp']['pass']; }else{ echo '';} ?>"/></td>
-			<td></td>
-			</tr>
-			<tr>
-				<th scope="row" align="right">Confirmer mot de passe : </th>
-				<td align="center"><input name="confirm_pass" type="password" maxlength="64" value="<?php if(isset($_SESSION['temp']['pass'])){ echo $_SESSION['temp']['pass']; }else{ echo '';} ?>"/></td>
-			<td></td>
-			</tr>
-			<tr>
-				<td colspan="3">&nbsp;</td>
-			</tr>
-		<?php
-			if(TICKET == 1){
-		?>
-			<tr>
-				<th scope="row" align="right">Ticket d'invitation : </th>
-				<td align="center"><input name="numero" type="text" maxlength="250" value="<?php if(isset($_SESSION['temp']['numero'])){ echo $_SESSION['temp']['numero']; }else{ echo '';} ?>"/></td>
-			<td></td>
-			</tr>			
-		<?php 
-			}
-		?>
-			<tr>
-				<td colspan="3" align="center"><p>[<a href="http://wiki.ewo-le-monde.com/doku.php?id=jeu:presentation_d_ewo">Charte d'inscription</a>]</p></td>
-			</tr>
-			<tr>
-				<td colspan="3" align="center"><input type="submit" value="Valider" class="bouton" /></td>
-			</tr>
-		</table>
-		</form>
-	</td>
-	<td><img src='../images/site/inscription.png' alt='inscription' /></td>
-	</tr>
+    <tr>
+    <td width='450' align='center'>
+        <form name='err' action="ControllerInscription.php" method="post">
+        <table border="0" width="100%">
+            <tr>
+                <td></td>
+                <td <?php if (isset($msg_error)) {
+                    echo "style='background-color:#FFB89F;'>$msg_error";
+                    } ?>></td>
+                <td></td>
+            </tr>   
+            <tr>
+                <td colspan="3">&nbsp;</td>
+            </tr>
+            <tr>
+                <th scope="row" align="right">Nom du compte : </th>
+                <td align="center"><input name="nom" type="text" maxlength="64" value="<?php if (isset($_SESSION['temp']['nom'])) {
+                    echo $_SESSION['temp']['nom'];
+                                                                                       } else {
+                                                                                           echo '';
+                                                                                       } ?>"/></td>
+            <td></td>
+            </tr>
+            <tr>
+                <td colspan="3">&nbsp;</td>
+            </tr>
+            <tr>
+                <th scope="row" align="right">E-Mail : </th>
+                <td align="center"><input name="email" type="text" maxlength="64" value="<?php if (isset($_SESSION['temp']['mail'])) {
+                    echo $_SESSION['temp']['mail'];
+                                                                                         } else {
+                                                                                             echo '';
+                                                                                         } ?>"/></td>
+            <td></td>
+            </tr>
+            <tr>
+                <td colspan="3">&nbsp;</td>
+            </tr>
+            <tr>
+                <th scope="row" align="right">Mot de passe : </th>
+                <td align="center"><input name="pass_inscription" type="password" maxlength="64" value="<?php if (isset($_SESSION['temp']['pass'])) {
+                    echo $_SESSION['temp']['pass'];
+                                                                                                        } else {
+                                                                                                            echo '';
+                                                                                                        } ?>"/></td>
+            <td></td>
+            </tr>
+            <tr>
+                <th scope="row" align="right">Confirmer mot de passe : </th>
+                <td align="center"><input name="confirm_pass" type="password" maxlength="64" value="<?php if (isset($_SESSION['temp']['pass'])) {
+                    echo $_SESSION['temp']['pass'];
+                                                                                                    } else {
+                                                                                                        echo '';
+                                                                                                    } ?>"/></td>
+            <td></td>
+            </tr>
+            <tr>
+                <td colspan="3">&nbsp;</td>
+            </tr>
+        <?php
+        if (TICKET == 1) {
+            ?>
+            <tr>
+                <th scope="row" align="right">Ticket d'invitation : </th>
+                <td align="center"><input name="numero" type="text" maxlength="250" value="<?php if (isset($_SESSION['temp']['numero'])) {
+                    echo $_SESSION['temp']['numero'];
+                                                                                           } else {
+                                                                                               echo '';
+                                                                                           } ?>"/></td>
+            <td></td>
+            </tr>           
+            <?php
+        }
+        ?>
+            <tr>
+                <td colspan="3" align="center"><p>[<a href="http://wiki.ewo-le-monde.com/doku.php?id=jeu:presentation_d_ewo">Charte d'inscription</a>]</p></td>
+            </tr>
+            <tr>
+                <td colspan="3" align="center"><input type="submit" value="Valider" class="bouton" /></td>
+            </tr>
+        </table>
+        </form>
+    </td>
+    <td><img src='../images/site/inscription.png' alt='inscription' /></td>
+    </tr>
 </table>
 
 
-			<!-- fin conteneur -->
+            <!-- fin conteneur -->
 </div>
 <!-- Fin du coin -->
 

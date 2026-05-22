@@ -1,4 +1,5 @@
 <?php
+
 namespace jeu\legion;
 
 require('fonctions_traitre.php');
@@ -12,15 +13,17 @@ $time = date('d-m-Y', $time);
 $time = strtotime($time);
 $time_m = date('Y-m-d H:i:s', $time - 48 * 3600);
 
-if(isset($_POST['submit'])){
-    $victime_id=mysql_real_escape_string($_POST['victime_id']);
-    if(is_numeric($victime_id))
-    	nvTraitre($victime_id);
+if (isset($_POST['submit'])) {
+    $victime_id = mysqli_real_escape_string($conn, $_POST['victime_id']);
+    if (is_numeric($victime_id)) {
+        nvTraitre($victime_id);
+    }
 }
 $pk = 0;
-foreach($_SESSION['persos']['id'] as $k => $v){
-	if($v == $_GET['mat'])
-		$pk = $k;
+foreach ($_SESSION['persos']['id'] as $k => $v) {
+    if ($v == $_GET['mat']) {
+        $pk = $k;
+    }
 }
 $resultat = recup_pot_traitre($_GET['mat'], $_SESSION['persos']['camp'][$pk], $time_m);
 ?>
@@ -41,7 +44,7 @@ while ($event = mysql_fetch_array($resultat)) {
                     FROM damier_persos
                             WHERE perso_id='$id_victime'";
 
-    $resultat_ = mysql_query($sql) or die(mysql_error());
+    $resultat_ = mysqli_query($conn, $sql) or die(mysqli_error($conn));
     if (!mysql_fetch_array($resultat_)) {
         $perso_ok = true;
     }
@@ -50,12 +53,13 @@ while ($event = mysql_fetch_array($resultat)) {
         FROM persos
                 WHERE id='$id_victime' AND faction_id=0";
 
-    $resultat_ = mysql_query($sql) or die(mysql_error());
+    $resultat_ = mysqli_query($conn, $sql) or die(mysqli_error($conn));
 
     if (mysql_fetch_array($resultat_)) {
         $perso_ok = true;
-    }else
+    } else {
         $perso_ok = false;
+    }
 
     if ($perso_ok) {
         $n++;
@@ -74,15 +78,16 @@ while ($event = mysql_fetch_array($resultat)) {
         }
 
         echo "<tr class='$color winner$n'>";
-        echo "<td align='center'><img src='../../images/$url' alt='avatar'/><br/>" . $nom . " [<a href='". SERVER_URL ."/persos/event/?id=$id_victime'>$id_victime</a>]</td>";
+        echo "<td align='center'><img src='../../images/$url' alt='avatar'/><br/>" . $nom . " [<a href='" . SERVER_URL . "/persos/event/?id=$id_victime'>$id_victime</a>]</td>";
         echo "<td align='center'>$date_event</td>";
         echo '<td align="center">
                 <form name="traitre" action="index.php?p=',$_GET['p'],'&amp;mat=',$_GET['mat'],'&amp;s=',$_GET['s'],'"
                     method="post">
                 <input type="hidden" name="victime_id" value="',$id_victime,'" />
                 <input type="hidden" name="perso_id" value="',$perso_id,'" />';
-        if (isset($faction_id))
+        if (isset($faction_id)) {
             echo "<input type='hidden' name='faction_id' value='$faction_id' />";
+        }
         echo "<input type='submit' name='submit' value='Tra&icirc;tre !' class='bouton' />
 							</form>
 							</td>";

@@ -1,5 +1,7 @@
 <?php
+
 namespace compte;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -13,8 +15,8 @@ include_once 'config_vacances.php';
  *
  * @author Leo
  */
-class Compte {
-
+class Compte
+{
     public $id;
     private $dao;
     public $passwd_clean;
@@ -22,95 +24,102 @@ class Compte {
     private $changed = array();
     private $initialized;
 
-    public function __construct($id) {
+    public function __construct($id)
+    {
         $this->id = $id;
         $this->dao = CompteDAO::getInstance();
         $this->initialized = false;
         $this->getUserOptions();
     }
-    
-    public function __destruct() {
 
-        if(count($this->changed > 0)) {
+    public function __destruct()
+    {
+
+        if (count($this->changed) > 0) {
             $change = array();
 
-            foreach($this->changed as $key) {
+            foreach ($this->changed as $key) {
                 $change[$key] = $this->options[$key];
             }
 
-            $this->dao->SaveUser($this->id, $change);
+            $this->dao->saveUser($this->id, $change);
         }
     }
 
-    public function __get($name) {
-        if(isset($this->options[$name])) {
+    public function __get($name)
+    {
+        if (isset($this->options[$name])) {
             return $this->options[$name];
         }
     }
-    
-    public function __set($name, $value) {
-        if($this->options[$name] != $value) {
-            
-            if($name == 'email') {
-                if(count($this->dao->checkEmail($value)) > 0) {
+
+    public function __set($name, $value)
+    {
+        if ($this->options[$name] != $value) {
+            if ($name == 'email') {
+                if (count($this->dao->checkEmail($value)) > 0) {
                     // Email déjà utilisé
                     return;
                 }
             }
-			
-            if($name == 'passwd') {
+
+            if ($name == 'passwd') {
                     forum_passwd($this->id, $this->passwd_clean);
             }
-            
-            $this->changed[] = $name;  
-            $this->options[$name] = $value;        
+
+            $this->changed[] = $name;
+            $this->options[$name] = $value;
         }
     }
-    
-    public static function encodePassword($pass) {
-        return hash ('sha256',$pass);     
+
+    public static function encodePassword($pass)
+    {
+        return hash('sha256', $pass);
     }
 
-    public function getUserOptions() {
-        
-        $result = $this->dao->SelectUser($this->id);
-        if($result !== null) {
-     
-            foreach($result as $name => $value) {
+    public function getUserOptions()
+    {
+
+        $result = $this->dao->selectUser($this->id);
+        if ($result !== null) {
+            foreach ($result as $name => $value) {
                 $this->options[$name] = $value;
             }
-            
+
             $this->initialized = true;
         }
     }
 
-function departVacances(){
+    public function departVacances()
+    {
 
-        $this->dao->UpdateGoVacancies($this->id);
-        
+        $this->dao->updateGoVacancies($this->id);
+
         /*
-        
-	if(mysql_query($sql)){
-		/*Gestion des évènements*/
-		/*foreach($persos as $matricule){
-			addEventVacances($matricule, 1);
-		}
-		return true;
-	}
-	else{
-		return false;
-	}*/
-}    
-    
-    function retourVacances() {
 
-        $date_retour = date('Y-m-d H:i:s', time() + (intval(VACANCES_DELAI_RETOUR) * 3600));
-        
-        $this->dao->UpdateBackVacancies($this->id, $date_retour);
+        if(mysqli_query($conn, $sql)){
+        /*Gestion des évènements*/
+        /*foreach($persos as $matricule){
+            addEventVacances($matricule, 1);
+        }
+        return true;
+        }
+        else{
+        return false;
+        }*/
     }
 
-    public function getVacancesButton() {
-        $vacance = $this->dao->SelectUserVacancies($this->id);
+    public function retourVacances()
+    {
+
+        $date_retour = date('Y-m-d H:i:s', time() + (intval(VACANCES_DELAI_RETOUR) * 3600));
+
+        $this->dao->updateBackVacancies($this->id, $date_retour);
+    }
+
+    public function getVacancesButton()
+    {
+        $vacance = $this->dao->selectUserVacancies($this->id);
         if (count($vacance) == 0) {
             //Pas de demande en vacances en cours
             return '<td><input type="checkbox" name="check_vacances" /><input type="hidden" name="v_action" value="depart" /></td><td><input type="submit" value="Partir en vacances" /></td>';
@@ -130,46 +139,42 @@ function departVacances(){
             }
         }
     }
-    
-    function statutVacances(){
 
-            $vacance = $this->dao->SelectUserVacancies($this->id);
-            
-            if (count($vacance) == 0) {
-                    //Pas de demande en vacances en cours
-                    return 'jeu';
+    public function statutVacances()
+    {
+
+            $vacance = $this->dao->selectUserVacancies($this->id);
+
+        if (count($vacance) == 0) {
+                //Pas de demande en vacances en cours
+                return 'jeu';
+        } else {
+                $row = $vacance[0];
+            if ($row['date_retour'] != '0000-00-00 00:00:00') {
+                    //Le retour est programmé
+                    return 'retour';
+            } elseif ($row['date_depart'] == '0000-00-00 00:00:00') {
+                    return 'depart';
+            } else {
+                    return 'vacances';
             }
-            else{
-                    $row = $vacance[0];
-                    if($row['date_retour'] != '0000-00-00 00:00:00'){
-                            //Le retour est programmé
-                            return 'retour';
-                    }
-                    elseif($row['date_depart'] == '0000-00-00 00:00:00'){
-                            return 'depart';
-                    }
-                    else{
-                            return 'vacances';
-                    }
-            }
+        }
     }
 
-    public static function getCompteByUserId($id) {
-		$dao = CompteDAO::getInstance();
-		$uid = $dao->SelectUserIdByMat($id);
-		
-		return new Compte($uid[0]);		
-	}
+    public static function getCompteByUserId($id)
+    {
+        $dao = CompteDAO::getInstance();
+        $uid = $dao->selectUserIdByMat($id);
 
+        return new Compte($uid[0]);
+    }
 }
 
-function forum_passwd($id, $pwd) {
-	include_once (SERVER_ROOT . '/lib/forum/ewo_forum.php');
+function forum_passwd($id, $pwd)
+{
+    include_once(SERVER_ROOT . '/lib/forum/ewo_forum.php');
 
-	$forum = new \EwoForum($id);		
+    $forum = new \EwoForum($id);
 
-	$forum->changePasswords($pwd);
-
+    $forum->changePasswords($pwd);
 }
-
-?>

@@ -11,8 +11,9 @@ namespace jeu\legion;
 
 $droits = LegionDroits::droitsFromPersoId($id);
 
-if(!$droits->canDo(LegionDroits::LISTE_NOOBS))
+if (!$droits->canDo(LegionDroits::LISTE_NOOBS)) {
     die();
+}
 
 echo '
 
@@ -27,11 +28,11 @@ echo '
 				<th align="center" class="cla_td_titre large">Nom</th>
 			</tr>';
 
-				$n=0;
-				 $legion = Legion::getLegionFromId($id);
+                $n = 0;
+                 $legion = Legion::getLegionFromId($id);
 
-			    $faction_carte = $_SESSION['persos']['carte_respawn'][$id];
-			    $sql = '
+                $faction_carte = $_SESSION['persos']['carte_respawn'][$id];
+                $sql = '
 			    	SELECT
 			    		p.id as id, p.nom as name
 					FROM
@@ -40,20 +41,19 @@ echo '
 			    		races r ON r.race_id = p.race_id AND r.grade_id = p.grade_id
 			        WHERE
 			    		DATE_ADD(p.creation_date, INTERVAL 15 DAY) >= NOW()
-						AND r.camp_id = '.$_SESSION['persos']['camp'][$id].'
+						AND r.camp_id = ' . $_SESSION['persos']['camp'][$id] . '
 					ORDER BY p.creation_date DESC;';
-			    $resultat	= mysql_query($sql) or die(mysql_error());
-				while($perso = mysql_fetch_object( $resultat)){
-					$url 		= icone_persos($perso->id);
-					echo '
+                $resultat   = mysqli_query($conn, $sql) or die(mysqli_error($conn));
+while ($perso = mysqli_fetch_object($resultat)) {
+    $url        = icone_persos($perso->id);
+    echo '
 			<tr>
 				<td align="center"><img src="../../images/',$url,'" alt="avatar"/></td>
-				<td align="center"><a href="'.SERVER_URL.'messagerie/index.php?id='.$_GET['mat'].'&dest='.$perso->id.'">'.$perso->id.'</a></td>
+				<td align="center"><a href="' . SERVER_URL . 'messagerie/index.php?id=' . $_GET['mat'] . '&dest=' . $perso->id . '">' . $perso->id . '</a></td>
 				<td align="center">',$perso->name,'</td>
 			<tr>';
-				}
-			echo '
+}
+            echo '
 		</table>
 </div>
 ';
-?>

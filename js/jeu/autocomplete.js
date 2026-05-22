@@ -1,16 +1,16 @@
-jQuery(window).ready(function() {
+jQuery(window).ready(function () {
     "use strict";
     var cache = {},
         lastXhr;
     jQuery("#pseudo_perso").autocomplete({
         minLength: 2,
-        source: function(request, response) {
+        source: function (request, response) {
             var term = request.term;
             if (term in cache) {
                 response(cache[term]);
                 return;
             }
-            lastXhr = jQuery.getJSON("liste_ajax.php", request, function(data, status, xhr) {
+            lastXhr = jQuery.getJSON("liste_ajax.php", request, function (data, status, xhr) {
                 cache[term] = data;
                 if (xhr === lastXhr) {
                     response(data);
@@ -22,7 +22,7 @@ jQuery(window).ready(function() {
         source: autocomplete_url,
         delay: 0,
         minLength: 0,
-        select: function(event, ui) {
+        select: function (event, ui) {
             if (ui.item) {
                 jQuery("#mat").val(ui.item.id);
                 jQuery("#mat").change();
@@ -30,7 +30,7 @@ jQuery(window).ready(function() {
         }
     });
     jQuery("#form").validate();
-    jQuery('select[name="eventId"]').change(function() {
+    jQuery('select[name="eventId"]').change(function () {
         if (jQuery(this).val() === 0) {
             jQuery('textarea[name="event"]').show();
         } else {
@@ -48,7 +48,7 @@ jQuery(window).ready(function() {
     function grade() {
         jQuery.getJSON('../ajax/grade_galon.php', {
             mat: jQuery('input[name="mat"]').val()
-        }, function(data) {
+        }, function (data) {
             if (data.grade !== undefined && data.galon !== undefined) {
                 jQuery('input[name="grade_perso"]').val(data.grade).change();
                 jQuery('input[name="galon_perso"]').val(data.galon).change();

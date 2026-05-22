@@ -4,7 +4,7 @@ function showTarget(event, info, nb, mat) {
     if (document.getElementById('subev' + event) === null) {
         var xhr = getXhr();
         // On défini ce qu'on va faire quand on aura la réponse
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function () {
             // On ne fait quelque chose que si on a tout reçu et que le serveur est ok
             if (xhr.readyState === 4 && xhr.status === 200) {
                 if (xhr.responseText !== 'null' && xhr.responseText !== 'aucun') {
@@ -66,7 +66,7 @@ function showTarget(event, info, nb, mat) {
 function loadContentFrom(divID, pageURL) {
     if (document.getElementById(divID).innerHTML.length === 0) {
         var xhr = getXhr();
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function () {
             // On ne fait quelque chose que si on a tout reçu et que le serveur est ok
             if (xhr.readyState === 4 && xhr.status === 200) {
                 if (xhr.responseText !== 'null' && xhr.responseText !== 'aucun') {
@@ -81,10 +81,10 @@ function loadContentFrom(divID, pageURL) {
         xhr.send(null);
     }
 }
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     var url = document.URL;
     var position = url.lastIndexOf("#");
-    jQuery(".conteneur_titre").bind("click", function(event) {
+    jQuery(".conteneur_titre").bind("click", function (event) {
         var id = jQuery(this).attr("id");
         jQuery(".conteneur_corps").css("display", "none");
         jQuery("#page" + id).css("display", "block");

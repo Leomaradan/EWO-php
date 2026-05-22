@@ -5,9 +5,9 @@ function autologin() {
         //Vérifier si l'auto-login est activé
         if (localStorage.autologin === "active") {
             var ticket = localStorage.loginticket,
-			login = localStorage.login,
-			urlConnection;
-                urlConnection = url + "/compte/connexion/connexion.php?login=" + login + "&ticket=" + ticket;
+                login = localStorage.login,
+                urlConnection;
+            urlConnection = url + "/compte/connexion/connexion.php?login=" + login + "&ticket=" + ticket;
 
             // charger la page de login en envoyant le ticket
             document.location = urlConnection;

@@ -1,12 +1,12 @@
 <?php
 
-namespace jeu\affiliation;
-
 /**
  * Gestion des demandes d'affiliation
  *
  * @author Benjamin Herbomez <benjamin.herbomez@gmail.com>
  */
+
+namespace jeu\affiliation;
 
 $sups   =   Superieurs::getAvailableSup($_SESSION['persos']['camp'][$id]);
 $sup    =   $sups[$_GET['mat']];
@@ -16,28 +16,30 @@ $demandes   = $demandeSup->getDemandes();
 $action     = null;
 
 
-if (isset($_GET['acc'])){
+if (isset($_GET['acc'])) {
     $action = 'acc';
-}
-else if (isset($_GET['ref'])){
+} elseif (isset($_GET['ref'])) {
     $action = 'ref';
 }
 
-if($action != null){
-    foreach($demandes as $key => $demande){
-        if($demande->getPersoId() == $_GET[$action]){
+if ($action != null) {
+    foreach ($demandes as $key => $demande) {
+        if ($demande->getPersoId() == $_GET[$action]) {
             $sql = AffiliationDAO::getInstance();
-            if($action == 'acc'){
-                 $sql->acceptAffiliationQuery($_GET['mat'], $demande->getSupNom(),$demande->getPersoId(),
-                         $_SESSION['persos']['camp'][$id]);
-                 if(in_array($demande->getPersoId(), $_SESSION['persos']['id'])){
-                     $persoId = array_keys($_SESSION['persos']['id'], $demande->getPersoId());
-                     $persoId = $persoId[0];
-                     $_SESSION['persos']['superieur'][$persoId] =  $_GET['mat'];
-                 }
-            }
-            else{
-                $sql->refuseAffiliationQuery($_GET['mat'], $demande->getSupNom(),$demande->getPersoId());
+            if ($action == 'acc') {
+                 $sql->acceptAffiliationQuery(
+                     $_GET['mat'],
+                     $demande->getSupNom(),
+                     $demande->getPersoId(),
+                     $_SESSION['persos']['camp'][$id]
+                 );
+                if (in_array($demande->getPersoId(), $_SESSION['persos']['id'])) {
+                    $persoId = array_keys($_SESSION['persos']['id'], $demande->getPersoId());
+                    $persoId = $persoId[0];
+                    $_SESSION['persos']['superieur'][$persoId] =  $_GET['mat'];
+                }
+            } else {
+                $sql->refuseAffiliationQuery($_GET['mat'], $demande->getSupNom(), $demande->getPersoId());
             }
             //clean and break;
             unset($demandes[$key]);
@@ -63,11 +65,11 @@ if($action != null){
     </thead>
     <tbody>
         <?php
-        foreach($demandes as $demande){
+        foreach ($demandes as $demande) {
             echo '
         <tr>
             <td>
-                <img src="'.SERVER_URL.'/images/',icone_persos($demande->getPersoId()),'" alt="avatar"
+                <img src="' . SERVER_URL . '/images/',icone_persos($demande->getPersoId()),'" alt="avatar"
                     title="Avatar de ',$demande->getPersoNom(),'" /></td>
             <td>',$demande->getPersoNom(),'</td>
             <td>',$demande->getPersoId(),'</td>

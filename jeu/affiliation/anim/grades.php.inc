@@ -1,44 +1,47 @@
 <?php
 
-namespace jeu\affiliation;
-
 /**
  * Gérer les grades des affiliés
  * @author Benjamin Herbomez <benjamin.herbomez@gmail.com>
  */
 
-require_once(SERVER_ROOT.'/persos/fonctions.php');
-require_once(SERVER_ROOT.'/jeu/fonctions.php');
+namespace jeu\affiliation;
+
+require_once(SERVER_ROOT . '/persos/fonctions.php');
+require_once(SERVER_ROOT . '/jeu/fonctions.php');
 
 $errMsg     = '';
 $notifMsg   = '';
 
 
-if(isset($_POST['mat']) && isset($_POST['grade_perso']) && isset($_POST['galon_perso']) &&
-   is_numeric($_POST['mat']) && is_numeric($_POST['grade_perso']) && is_numeric($_POST['galon_perso'])){
+if (
+    isset($_POST['mat']) && isset($_POST['grade_perso']) && isset($_POST['galon_perso']) &&
+    is_numeric($_POST['mat']) && is_numeric($_POST['grade_perso']) && is_numeric($_POST['galon_perso'])
+) {
     $sql = AffiliationDAO::getInstance();
-    if($sql->isSup($_GET['mat'], $_POST['mat'])){
+    if ($sql->isSup($_GET['mat'], $_POST['mat'])) {
         $grade = $_POST['grade_perso'];
         $galon = $_POST['galon_perso'];
-        if($grade < 0)
+        if ($grade < 0) {
             $grade = 0;
-        else if($grade > 5)
+        } elseif ($grade > 5) {
             $grade = 5;
-        if($galon < 0)
+        }
+        if ($galon < 0) {
             $galon = 0;
-        else if($galon > 4)
+        } elseif ($galon > 4) {
             $galon = 4;
-        
-        $query = 'SELECT race_id as race FROM persos WHERE id = '.$_POST['mat'];
+        }
 
-	$result = mysql_query($query) or die (mysql_error());
-	$race = mysql_fetch_object($result);
+        $query = 'SELECT race_id as race FROM persos WHERE id = ' . $_POST['mat'];
+
+        $result = mysqli_query($conn, $query) or die(mysqli_error($conn));
+        $race = mysqli_fetch_object($result);
         $race = $race->race;
-        
-	change_race_grade($_POST['mat'], $race, $grade);
+
+        change_race_grade($_POST['mat'], $race, $grade);
         change_galon($_POST['mat'], $galon);
-    }
-    else{
+    } else {
         $errMsg = 'Ce personnage n\'est pas votre affili&eacute;';
     }
 }
@@ -51,16 +54,18 @@ if(isset($_POST['mat']) && isset($_POST['grade_perso']) && isset($_POST['galon_p
       id="form">
     <table class="table-noStyle" >
         <?php
-            if($errMsg != '')
-                echo '
+        if ($errMsg != '') {
+            echo '
         <tr>
             <td colspan="4" style="color:red;">',$errMsg,'</td>
         </tr>';
-            if($notifMsg != '')
-                echo '
+        }
+        if ($notifMsg != '') {
+            echo '
         <tr>
             <td colspan="4" style="color:green;">',$notifMsg,'</td>
         </tr>';
+        }
         ?>
         <tr>
             <th colspan="4" style="text-align:center;">
@@ -96,7 +101,7 @@ if(isset($_POST['mat']) && isset($_POST['grade_perso']) && isset($_POST['galon_p
 ?>
 <script type="text/javascript">
     <!--
-	var autocomplete_url =  "../../ajax/affi.php?sup=<?php echo $_GET['mat'];?>&";
+    var autocomplete_url =  "../../ajax/affi.php?sup=<?php echo $_GET['mat'];?>&";
 
     -->
 </script>

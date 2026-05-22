@@ -1,8 +1,5 @@
 <?php
 
-namespace conf;
-use conf\Helpers as Helpers;
-
 /**
  * Include de toutes les fonctions principale du jeux
  *
@@ -10,6 +7,10 @@ use conf\Helpers as Helpers;
  * @version 1.0
  * @package conf
  */
+
+namespace conf;
+
+use conf\Helpers as Helpers;
 
 session_start();
 
@@ -21,13 +22,13 @@ date_default_timezone_set("Europe/Paris");
 include_once 'config.php';
 
 // Requis pour la connexion a la bdd
-include_once(SERVER_ROOT."/conf/connect.conf.php");
+include_once(SERVER_ROOT . "/conf/connect.conf.php");
 
 // Declaration du controle de connexion
-include_once (SERVER_ROOT."/conf/controle_connexion.php");
+include_once(SERVER_ROOT . "/conf/controle_connexion.php");
 
 // Fonctions du site
-include_once(SERVER_ROOT."/conf/fonctions.php");
+include_once(SERVER_ROOT . "/conf/fonctions.php");
 
 // Magasin de variable
 //include_once("VariableStorage.php");
@@ -38,8 +39,6 @@ include_once(SERVER_ROOT."/conf/fonctions.php");
 // Autoloader
 include_once('autoloader.php');
 
-if(isset($_SESSION['utilisateur']['id'])) {
-	$utilisateur_id = $_SESSION['utilisateur']['id'];
+if (isset($_SESSION['utilisateur']['id'])) {
+    $utilisateur_id = $_SESSION['utilisateur']['id'];
 }
-
-?>

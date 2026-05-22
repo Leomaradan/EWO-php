@@ -1,91 +1,101 @@
 <?php
 
 namespace compte;
-use \conf\ConnecteurDAO as ConnecteurDAO;
+
+use conf\ConnecteurDAO as ConnecteurDAO;
 
 /**
  * Connecteur DAO pour le compte
- * 
+ *
  * @author Ganesh
  * @version 1
  * @package compte
  * @category dao
  */
 
-class CompteDAO extends ConnecteurDAO {
-
-    public function SelectKeys($id) {
+class CompteDAO extends ConnecteurDAO
+{
+    public function selectKeys($id)
+    {
         $sql = "SELECT * FROM api_key WHERE utilisateur_id = ?";
         $this->prepare($sql);
         $this->executePreparedStatement(null, array($id));
         return $this->fetchAll();
     }
 
-    public function InsertKey($id, $niveau, $nom) {
+    public function insertKey($id, $niveau, $nom)
+    {
         $sql = "INSERT INTO api_key (utilisateur_id, nom, cle, niveau)
 		VALUES (:user, :nom, MD5(NOW() + :user), :niveau)";
         $this->prepare($sql);
         $this->executePreparedStatement(null, array(":user" => $id, ":niveau" => $niveau, ":nom" => $nom));
     }
 
-    public function DeleteKey($id, $cle) {
+    public function deleteKey($id, $cle)
+    {
         $sql = "DELETE FROM api_key WHERE utilisateur_id = :user AND cle = :key";
         $this->prepare($sql);
         $this->executePreparedStatement(null, array(":user" => $id, ":key" => $cle));
     }
 
-    public function RenewKey($id, $cle) {
+    public function renewKey($id, $cle)
+    {
         $sql = "UPDATE api_key SET cle = MD5(NOW() + :user) WHERE utilisateur_id = :user AND cle = :key";
         $this->prepare($sql);
         $this->executePreparedStatement(null, array(":user" => $id, ":key" => $cle));
     }
 
-    public function SelectUser($id) {
+    public function selectUser($id)
+    {
         $sql = 'SELECT * FROM `utilisateurs` WHERE id = ?';
         $this->prepare($sql);
         $this->executePreparedStatement(null, array($id));
-        $fetch = $this->fetchAll_assoc();
+        $fetch = $this->fetchAllAssoc();
         if (isset($fetch[0])) {
             return $fetch[0];
         }
         return null;
     }
-	
-	public function SelectUserIdByMat($mat) {
-		$sql = 'SELECT utilisateur_id FROM persos WHERE id = ?';
+
+    public function selectUserIdByMat($mat)
+    {
+        $sql = 'SELECT utilisateur_id FROM persos WHERE id = ?';
         $this->prepare($sql);
         $this->executePreparedStatement(null, array($mat));
-        return $this->fetch_array();   		
-	}
-    
-    public function SelectUserVacancies($id) {
-        $sql = 'SELECT * FROM utilisateurs_vacances WHERE utilisateur_id = ?'; 
+        return $this->fetchArray();
+    }
+
+    public function selectUserVacancies($id)
+    {
+        $sql = 'SELECT * FROM utilisateurs_vacances WHERE utilisateur_id = ?';
         $this->prepare($sql);
         $this->executePreparedStatement(null, array($id));
-        return $this->fetchAll_assoc();        
+        return $this->fetchAllAssoc();
     }
 
-    public function UpdateGoVacancies($id) {
+    public function updateGoVacancies($id)
+    {
         $sql = 'INSERT INTO utilisateurs_vacances (utilisateur_id,date_demande) VALUES (:id, NOW())';
         $this->prepare($sql);
-        $this->executePreparedStatement(null, array(":id" => $id));        
-    }    
-    
-    public function UpdateBackVacancies($id, $date) {
+        $this->executePreparedStatement(null, array(":id" => $id));
+    }
+
+    public function updateBackVacancies($id, $date)
+    {
         $sql = 'UPDATE utilisateurs_vacances SET date_retour = :dateret WHERE utilisateur_id = :id';
         $this->prepare($sql);
-        $this->executePreparedStatement(null, array(":dateret" => $date, ":id" => $id));        
+        $this->executePreparedStatement(null, array(":dateret" => $date, ":id" => $id));
     }
-    
-    public function SaveUser($id, $param) {
+
+    public function saveUser($id, $param)
+    {
 
         if (count($param) > 0) {
-
             $tab = array();
             $columns = array();
 
             foreach ($param as $key => $value) {
-                $columns[] = '`'.$key.'` = :'.$key;
+                $columns[] = '`' . $key . '` = :' . $key;
                 $tab[':' . $key] = $value;
             }
 
@@ -96,14 +106,14 @@ class CompteDAO extends ConnecteurDAO {
 
             $this->prepare($sql);
             $this->executePreparedStatement(null, $tab);
-        }	            
+        }
     }
-    
-    public function checkEmail($email) {
+
+    public function checkEmail($email)
+    {
         $sql = "SELECT id FROM utilisateurs WHERE email = ?";
         $this->prepare($sql);
         $this->executePreparedStatement(null, array($email));
-        return $this->fetchAll();        
+        return $this->fetchAll();
     }
-
 }

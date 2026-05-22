@@ -1,7 +1,5 @@
 <?php
 
-namespace compte\inscription;
-
 /**
  * Inscription - Validation du lien d'activation
  *
@@ -12,10 +10,12 @@ namespace compte\inscription;
  * @version 1.0
  * @package inscription
  */
+
+namespace compte\inscription;
+
 require_once __DIR__ . '/../../conf/master.php';
 
 if (isset($_GET['code']) && isset($_GET['nom']) && isset($_GET['email'])) {
-
 // Paramètres de connexion à la base de données
     $dao = InscriptionDAO::getInstance();
 
@@ -23,7 +23,7 @@ if (isset($_GET['code']) && isset($_GET['nom']) && isset($_GET['email'])) {
     $nom = ucfirst(htmlspecialchars(strip_tags($_GET['nom']), ENT_COMPAT, 'UTF-8'));
     $email = filter_var($_GET['email'], FILTER_VALIDATE_EMAIL);
 
-    $verif = $dao->SelectUserByCode($code_validation);
+    $verif = $dao->selectUserByCode($code_validation);
 
 
     if ($verif['nom'] != $nom || $verif['droits'][0] == 1) {
@@ -36,18 +36,18 @@ if (isset($_GET['code']) && isset($_GET['nom']) && isset($_GET['email'])) {
     $msg = "Votre compte vient d'être validé, vous pouvez maintenant accéder à votre page de jeu.";
 
 
-    $dao->ActiveCompte($code_validation);
+    $dao->activeCompte($code_validation);
 
 
-		$mail = new \conf\Mail();
-		
-		$mail->Subject .= 'Votre compte est valide';
+        $mail = new \conf\Mail();
 
-		
-		$mail->AddTo($email, $nom);
-					
-		$mail->ParseTitle = "EWO";			
-		$mail->ParseCorps = "<table width='100%' height='200px'>
+        $mail->Subject .= 'Votre compte est valide';
+
+
+        $mail->AddTo($email, $nom);
+
+        $mail->ParseTitle = "EWO";
+        $mail->ParseCorps = "<table width='100%' height='200px'>
 							<tr>
 								<td align='center' style='background: url(" . SERVER_URL . "/images/site/ewo_transparant.png) no-repeat 50% 50%'>
 								<p>Votre compte $nom est &agrave; pr&eacute;sent actif</p>
@@ -56,21 +56,19 @@ if (isset($_GET['code']) && isset($_GET['nom']) && isset($_GET['email'])) {
 								</td>
 							</tr>
 				</table>";
-				
-		$mail->Parse();
 
-		$mail->Send();		
+        $mail->Parse();
+
+        $mail->Send();
 
 
         $titre = "Compte actif";
         $text = "Votre compte est d&eacute;sormais actif, un mail de confirmation vient de vous parvenir sur " . $email;
         $lien = "../";
         gestion_erreur($titre, $text, $lien);
-
 } else {
     $titre = "Op&eacute;ration non comprise";
     $text = "Op&eacute;ration non comprise, il nous est impossible de valider votre compte utilisateur.";
     $lien = "..";
     gestion_erreur($titre, $text, $lien);
 }
-?>

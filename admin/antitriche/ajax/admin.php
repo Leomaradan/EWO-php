@@ -1,21 +1,24 @@
 <?php
-	include('ref.php.inc');
-	require_once($ref.'admin/antitriche/session_store.php.inc');
-	
-	$at = get();
-	
-	if(!isset($_POST['action']))
-		die();
-	if($_POST['action'] == 'getLog' && isset($_POST['member']) && is_numeric($_POST['member'])){
-		echo '
+
+    include('ref.php.inc');
+require_once($ref . 'admin/antitriche/session_store.php.inc');
+
+    $at = get();
+         $conn = bdd_connect('ewo');
+
+if (!isset($_POST['action'])) {
+    die();
+}
+if ($_POST['action'] == 'getLog' && isset($_POST['member']) && is_numeric($_POST['member'])) {
+    echo '
 		<table>
 			<tr>
 				<th>Date</th>
 				<th>Action</th>
 				<th>Message</th>
 			</tr>';
-			
-			$sql = '
+
+        $sql = '
 				SELECT
 					u.nom as member,
 					l.date as date,
@@ -27,32 +30,31 @@
 					`at_log` l,
 					`utilisateurs` u
 				WHERE
-					l.compte = '.$_POST['member'].' AND
+					l.compte = ' . $_POST['member'] . ' AND
 					l.id = a.id AND
 					u.id = l.compte
 				ORDER BY
 					l.date DESC
 			';
-			
-			
-			
-			$search = mysql_query($sql) or die(mysql_error());
-			while($log = mysql_fetch_object($search)){
-				echo '
+
+
+
+        $search = mysqli_query($conn, $sql) or die(mysqli_error($conn));
+    while ($log = mysqli_fetch_object($search)) {
+        echo '
 			<tr>
-				<td>'.$log->date.'</td>
-				<td>'.$log->action.'</td>
-				<td>'.$log->message.'</td>
+				<td>' . $log->date . '</td>
+				<td>' . $log->action . '</td>
+				<td>' . $log->message . '</td>
 			</tr>
 				';
-			}
-			
-			
-			echo '
+    }
+
+
+        echo '
 		</table>';
-	}
-	else if($_POST['action'] == 'getName' AND isset($_POST['begin'])){
-		$sql = '
+} elseif ($_POST['action'] == 'getName' and isset($_POST['begin'])) {
+    $sql = '
 				SELECT
 					p.nom as name
 					
@@ -67,17 +69,17 @@
 				ORDER BY
 					p.nom ASC
 			';
-			
-			
-		$i = false;
-		
-		$search = mysql_query($sql) or die(mysql_error());
-		while($member = mysql_fetch_object($search)){
-			if($i)
-				echo ' ';
-			else
-				$i = true;
-			echo str_replace(' ','&nbsp;',$member->name);
-		}
-	}
-?>
+
+
+    $i = false;
+
+    $search = mysqli_query($conn, $sql) or die(mysqli_error($conn));
+    while ($member = mysqli_fetch_object($search)) {
+        if ($i) {
+            echo ' ';
+        } else {
+            $i = true;
+        }
+        echo str_replace(' ', '&nbsp;', $member->name);
+    }
+}

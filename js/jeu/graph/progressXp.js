@@ -1,5 +1,5 @@
 var chart;
-$(document).ready(function() {
+$(document).ready(function () {
 	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'container',
@@ -68,7 +68,7 @@ $(document).ready(function() {
 			name: 'XP',
 			pointInterval: 24 * 3600 * 1000,
 			pointStart: Date.UTC(utc),
-			data: [ progressionXp ]
+			data: [progressionXp]
 		}]
 	});
 });

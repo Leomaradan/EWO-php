@@ -3,9 +3,9 @@ try {
     {
         fullPage : true
     });*/
-	$( '.wysiwyg' ).ckeditor();
-} catch(e) {
-    
+    $('.wysiwyg').ckeditor();
+} catch (e) {
+
 }
 /*
 try {
@@ -33,5 +33,4 @@ try {
     });
 } catch(e) {
     
-}  */ 
- 
+}  */

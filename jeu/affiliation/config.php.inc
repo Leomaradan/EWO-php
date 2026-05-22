@@ -1,30 +1,31 @@
 <?php
 
-namespace jeu\affiliation;
-
 /**
  * Liste des pages utilisables
  *
  * @author Benjamin Herbomez <benjamin.herbomez@gmail.com>
  */
-    define('PAGE_PERSOS'    , 0);
-    define('PAGE_PERSO'     , 1);
-    define('PAGE_ANIM'      , 2);
-    define('PAGE_ADMIN'     , 3);
 
-    define('PAGE_PERSO_AFFILIER'    , 0);
-    define('PAGE_PERSO_DESAFFILIER' , 1);
-    define('PAGE_PERSO_ANNULER'     , 2);
+namespace jeu\affiliation;
 
-    define('PAGE_ANIM_LISTE_MEMBRES'    , 0);
-    define('PAGE_ANIM_BENE_MALE'        , 1);
-    define('PAGE_ANIM_RENIER'           , 2);
-    define('PAGE_ANIM_TP'               , 3);
-    define('PAGE_ANIM_LIST'             , 4);
-    define('PAGE_ANIM_GRADE'            , 5);
-    define('PAGE_ANIM_STATS'            , 6);
+    define('PAGE_PERSOS', 0);
+    define('PAGE_PERSO', 1);
+    define('PAGE_ANIM', 2);
+    define('PAGE_ADMIN', 3);
 
-    define('TP_PV_COEFF', 1/3); //Coeff de perte de pvs lors du TP
+    define('PAGE_PERSO_AFFILIER', 0);
+    define('PAGE_PERSO_DESAFFILIER', 1);
+    define('PAGE_PERSO_ANNULER', 2);
+
+    define('PAGE_ANIM_LISTE_MEMBRES', 0);
+    define('PAGE_ANIM_BENE_MALE', 1);
+    define('PAGE_ANIM_RENIER', 2);
+    define('PAGE_ANIM_TP', 3);
+    define('PAGE_ANIM_LIST', 4);
+    define('PAGE_ANIM_GRADE', 5);
+    define('PAGE_ANIM_STATS', 6);
+
+    define('TP_PV_COEFF', 1 / 3); //Coeff de perte de pvs lors du TP
 
     $pages = array(
         PAGE_PERSOS => 'persos',
@@ -59,6 +60,3 @@ namespace jeu\affiliation;
         PAGE_ANIM_GRADE         => 'G&eacute;rer les grades',
         PAGE_ANIM_STATS         => 'statistiques'
     );
-
-
-?>

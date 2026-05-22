@@ -1,7 +1,5 @@
 <?php
 
-namespace site\chat;
-
 /**
  * IRC - Mibbit
  *
@@ -12,21 +10,23 @@ namespace site\chat;
  * @package site\chat
  */
 
+namespace site\chat;
+
 //-- Header --
 require_once __DIR__ . '/../../conf/master.php';
 
 $header['title'] = "Chat irc";
-include(SERVER_ROOT."/template/header_new.php");
+include(SERVER_ROOT . "/template/header_new.php");
 //------------
 ?>
 
 <div align='center'>
 <?php
-if (isset($_SESSION['utilisateur']['id'])){
-	$pseudo = $_SESSION['utilisateur']['nom'];
-}else{
-	$pseudo = "EWO_guest" . time(); 
-	echo "<p>Pour changer de pseudo, taper la commande /nick 'votre pseudo'</p>";
+if (isset($_SESSION['utilisateur']['id'])) {
+    $pseudo = $_SESSION['utilisateur']['nom'];
+} else {
+    $pseudo = "EWO_guest" . time();
+    echo "<p>Pour changer de pseudo, taper la commande /nick 'votre pseudo'</p>";
 }
 ?>
 <iframe width="960" height="500" scrolling="no" frameborder="0"
@@ -36,6 +36,6 @@ if (isset($_SESSION['utilisateur']['id'])){
 
 <?php
 //-- Footer --
-include(SERVER_ROOT."/template/footer_new.php");
+include(SERVER_ROOT . "/template/footer_new.php");
 //------------
 ?>

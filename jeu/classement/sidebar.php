@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Classement sidebord
  *
@@ -7,6 +8,7 @@
  * @package classement
  * @category sidebar
  */
+
 ?>
 <div class='side_txt'>
 <a class='side_lien' href='.'>Classement</a>

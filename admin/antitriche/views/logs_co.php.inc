@@ -1,61 +1,72 @@
 <?php
-	include_once('ref.php.inc');
-	require_once('config.php.inc');
-	
-	function view_log($at){
-		if(!isset($_SESSION['at_log_log_co']) || $_SESSION['at_log_log_co']+1800 <= time()){//On refresh toute les 30 minutes
-			$logger = $at->getATLogger();
-			$logger->log(array(0,'a regard&eacute; les logs de connexion',null));
-			$_SESSION['at_log_log_co'] = time();
-		}
-	}
 
-	function content($at){ 
-		if(!isset($_GET['p']) OR !is_numeric($_GET['p']))
-			$p = 1;
-		else
-			$p = $_GET['p'];
-			
-		$sql 	= 'SELECT SQL_CACHE COUNT(*) as nb FROM `at_log_connexion`;';
-		$search	= mysql_query($sql);
-		$data	= mysql_fetch_object($search);
-		
-		$nbPage = ceil($data->nb/30);
-		if($p > $nbPage)
-			$p = $nbPage;
-			
-			
-		$s = $p - 7;
-		if($s < 1)
-			$s = 1;
-		$e = $p + 7;
-		if($e > $nbPage)
-			$e = $nbPage;
-			
-		$d = round(($e - $s)/3);
-			
-		$pages = '';	
-		for($i = $s;$i <= $e;++$i){
-			if($i < $p-ceil($d/2))
-				$c = 'redSection';
-			elseif($i > $p+ceil($d/2))
-				$c = 'blueSection';
-			else
-				$c = 'greenSection';
-			$pages .= '
-				<span class="'.$c.'">
-					<a href="index.php?action=logs_co&amp;p='.$i.'">'.$i.'</a>
+    include_once('ref.php.inc');
+require_once('config.php.inc');
+
+function view_log($at)
+{
+
+    if (!isset($_SESSION['at_log_log_co']) || $_SESSION['at_log_log_co'] + 1800 <= time()) {
+//On refresh toute les 30 minutes
+        $logger = $at->getATLogger();
+        $logger->log(array(0,'a regard&eacute; les logs de connexion',null));
+        $_SESSION['at_log_log_co'] = time();
+    }
+}
+
+function content($at)
+{
+
+    if (!isset($_GET['p']) or !is_numeric($_GET['p'])) {
+        $p = 1;
+    } else {
+        $p = $_GET['p'];
+    }
+
+    $sql    = 'SELECT SQL_CACHE COUNT(*) as nb FROM `at_log_connexion`;';
+    $search = mysqli_query($conn, $sql);
+    $data   = mysqli_fetch_object($search);
+
+    $nbPage = ceil($data->nb / 30);
+    if ($p > $nbPage) {
+        $p = $nbPage;
+    }
+
+
+    $s = $p - 7;
+    if ($s < 1) {
+        $s = 1;
+    }
+    $e = $p + 7;
+    if ($e > $nbPage) {
+        $e = $nbPage;
+    }
+
+    $d = round(($e - $s) / 3);
+
+    $pages = '';
+    for ($i = $s; $i <= $e; ++$i) {
+        if ($i < $p - ceil($d / 2)) {
+            $c = 'redSection';
+        } elseif ($i > $p + ceil($d / 2)) {
+            $c = 'blueSection';
+        } else {
+            $c = 'greenSection';
+        }
+        $pages .= '
+				<span class="' . $c . '">
+					<a href="index.php?action=logs_co&amp;p=' . $i . '">' . $i . '</a>
 				</span>
 			';
-		}	
-		
-		$pages = '
+    }
+
+    $pages = '
 			<div style="text-align	: center">
-				'.$pages.'
+				' . $pages . '
 			</div>
 		';
-		
-		$r = $pages.'
+
+    $r = $pages . '
 		<table>
 			<tr>
 				<th width="10%">Utilisateur</th>
@@ -64,8 +75,8 @@
 				<th width="5%">Cookie</th>
 				<th width="60%">Navigateur</th>
 			</tr>';
-			
-			$sql = '
+
+        $sql = '
 				SELECT
 				SQL_CACHE
 					u.nom 		as user,
@@ -83,27 +94,25 @@
 					ON (n.id = c.navigateur)
 				ORDER BY
 					l.date DESC
-				LIMIT '.(($p-1)*AT_RESULT_PAGE_COUNT ).','.AT_RESULT_PAGE_COUNT .'
+				LIMIT ' . (($p - 1) * AT_RESULT_PAGE_COUNT ) . ',' . AT_RESULT_PAGE_COUNT . '
 			';
-			
-			$search = mysql_query($sql);
-			while($log = mysql_fetch_object($search)){
-				$r .= '
+
+        $search = mysqli_query($conn, $sql);
+    while ($log = mysqli_fetch_object($search)) {
+        $r .= '
 			<tr>
-				<td>'.stripslashes($log->user).'</td>
-				<td>'.$log->date.'</td>
-				<td>'.$log->ip.'</td>
-				<td>'.$log->cookie.'</td>
-				<td>'.$log->nav.'</td>
+				<td>' . stripslashes($log->user) . '</td>
+				<td>' . $log->date . '</td>
+				<td>' . $log->ip . '</td>
+				<td>' . $log->cookie . '</td>
+				<td>' . $log->nav . '</td>
 			</tr>
 				';
-			}
-			
-			
-			$r .='
-		</table>'.$pages;
-		
-		return $r;
-	}
-	
-?>
+    }
+
+
+        $r .= '
+		</table>' . $pages;
+
+        return $r;
+}

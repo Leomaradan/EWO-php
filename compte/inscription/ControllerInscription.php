@@ -1,6 +1,5 @@
 <?php
 
-namespace compte\inscription;
 /**
  * Inscription - Controle de l'inscription
  *
@@ -12,7 +11,11 @@ namespace compte\inscription;
  * @package inscription
  */
 
+namespace compte\inscription;
+
 require_once __DIR__ . '/../../conf/master.php';
+
+$_TICKET = 0;
 
 // paramètres de connexion à la base de données
 $ewo = bdd_connect('ewo');
@@ -20,12 +23,10 @@ $ewo = bdd_connect('ewo');
 $dao = InscriptionDAO::getInstance();
 
 
-$ouverture = mktime (13, 03, 13, 3, 13, 2013);
+$ouverture = mktime(13, 03, 13, 3, 13, 2013);
 
-if($ouverture > time()) {
-
+if ($ouverture > time()) {
     exit;
-
 }
 
 // Mise sous variables des données récupérées
@@ -48,7 +49,7 @@ if (empty($nom)) {
     $msg_error .= "Veuillez mettre un pseudo.<br />";
 } else {
     // Vérifier que le nom ne soit pas en bdd
-    $users = $dao->VerifyExistName($nom);
+    $users = $dao->verifyExistName($nom);
 
     if ($users) {
         $msg_error .= "Ce nom de compte existe déjà.<br />";
@@ -64,8 +65,7 @@ if (empty($email)) {
     $enregistrement = 1;
 // Vérification de la validité de l'adresse email.
 } else {
-
-    if ($dao->VerifyExistEmail($email)) {
+    if ($dao->verifyExistEmail($email)) {
         $msg_error .= "Cet E-mail est déjà utilisé.<br />";
         $enregistrement = 1;
     } else {
@@ -88,8 +88,7 @@ if ($pass != $confirm_pass) {
 }
 
 if ($_TICKET == 1) {
-
-    if ($dao->VerifyExistEmail($numero)) {
+    if ($dao->verifyExistEmail($numero)) {
         $msg_error .= "Ce ticket n'existe pas ou a déjà été utilisé.<br />";
         $enregistrement = 1;
     } else {
@@ -120,7 +119,7 @@ if ($enregistrement == 0) {
     $pass = hash('sha256', $pass);
     //--
 
-    $sql_users = $dao->AddUser($nom, $email, $pass, $code_validation, $session_id);
+    $sql_users = $dao->addUser($nom, $email, $pass, $code_validation, $session_id);
 
     if ($sql_users == false || $sql_users == 0) {
         $_SESSION['temp']['error'] = "Echec lors de la cr&eacute;ation, erreur de retour SQL, contacter un administrateur";
@@ -128,14 +127,13 @@ if ($enregistrement == 0) {
     } else {
         if ($_TICKET == 1) {
             //-- suppression du ticket d'invitation utilisé
-            $this->dao->RemoveTicket($numero);
+            $this->dao->removeTicket($numero);
         }
         ?>
         <script language="javascript" type="text/javascript" >document.location="confirm_inscrip.php"</script>
         <?php
-
     }
-    mysql_close($ewo);
+    mysqli_close($ewo);
 } else {
     $_SESSION['temp']['error'] = $msg_error;
     header("location:index.php");

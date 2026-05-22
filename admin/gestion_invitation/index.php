@@ -1,9 +1,9 @@
 <?php
 //-- Header --
 $root_url = "./../..";
-include($root_url."/template/header_new.php");
+include($root_url . "/template/header_new.php");
 /*-- Connexion at ou admin requise --*/
-ControleAcces('admin',1);
+ControleAcces('admin', 1);
 /*-----------------------------*/
 ?>
 <div align='center' id='contact'>
@@ -13,14 +13,14 @@ ControleAcces('admin',1);
 <form name='invitations' enctype="multipart/form-data" action="ajout_invitation.php" method="POST">
 <table>
 <tr>
-	<td>
-		Nombre d'invitations à créer : <input type='text' size='2' name='nb_num' />
-	</td>
+    <td>
+        Nombre d'invitations à créer : <input type='text' size='2' name='nb_num' />
+    </td>
 </tr>
 <tr>
-	<td  colspan="2">
-		<input type="submit" value="Ajouter" class="bouton" />
-	</td>
+    <td  colspan="2">
+        <input type="submit" value="Ajouter" class="bouton" />
+    </td>
 </tr>
 </table>
 </form>
@@ -33,14 +33,18 @@ ControleAcces('admin',1);
 <table>
 <?php
 
-	$invitations = "SELECT*FROM invitations ORDER BY distribue";							
-	$result = mysql_query ($invitations) or die (mysql_error());
-	$n=1;
-	while ($invite = mysql_fetch_array ($result)){
-		if ($invite['distribue'] == 1){$color = '#95EFA1';}else{$color = '';}
-		echo "<tr style='background-color:".$color."'><td> $n </td><td>".$invite['numero']."</td> <td> Créé le ".$invite['date']."</td> <td><input name='id[]' type='checkbox' value='".$invite['id']."' /></td></tr>";
-		$n++;
-	}
+    $invitations = "SELECT*FROM invitations ORDER BY distribue";
+    $result = mysqli_query($conn, $invitations) or die(mysqli_error($conn));
+    $n = 1;
+while ($invite = mysql_fetch_array($result)) {
+    if ($invite['distribue'] == 1) {
+        $color = '#95EFA1';
+    } else {
+        $color = '';
+    }
+    echo "<tr style='background-color:" . $color . "'><td> $n </td><td>" . $invite['numero'] . "</td> <td> Créé le " . $invite['date'] . "</td> <td><input name='id[]' type='checkbox' value='" . $invite['id'] . "' /></td></tr>";
+    $n++;
+}
 
 ?>
 <tr>
@@ -52,6 +56,6 @@ ControleAcces('admin',1);
 
 <?php
 //-- Footer --
-include($root_url."/template/footer_new.php");
+include($root_url . "/template/footer_new.php");
 //------------
 ?>

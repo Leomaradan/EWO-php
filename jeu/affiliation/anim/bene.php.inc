@@ -2,10 +2,10 @@
 
 namespace jeu\affiliation;
 
-use \persos\eventManager\eventManager as eventManager;
-use \persos\eventManager\eventFormatter as eventFormatter;
+use persos\eventManager\eventManager as eventManager;
+use persos\eventManager\eventFormatter as eventFormatter;
 
-require_once(SERVER_ROOT.'/persos/fonctions.php');
+require_once(SERVER_ROOT . '/persos/fonctions.php');
 /**
  *
  * @author Benjamin Herbomez <benjamin.herbomez@gmail.com>
@@ -16,8 +16,8 @@ $err = '';
 $msgs = array();
 
 $sql = 'SELECT id, texte FROM evenements_texte';
-$messages = mysql_query($sql) or die (mysql_error());
-while($ligne = mysql_fetch_row($messages)) {
+$messages = mysqli_query($conn, $sql) or die(mysqli_error($conn));
+while ($ligne = mysqli_fetch_row($messages)) {
     $msgs[$ligne[0]] = $ligne[1];
 }
 
@@ -94,31 +94,33 @@ $fields = array(
 
 $post = true;
 $percent = array();
-foreach($fields as $field => $val){
-    if(!isset($_POST[$field])){
-        if($field != 'mat')
-            $err = $field.' est manquant';
+foreach ($fields as $field => $val) {
+    if (!isset($_POST[$field])) {
+        if ($field != 'mat') {
+            $err = $field . ' est manquant';
+        }
         $post = false;
         break;
-    } 
-    if($val == null)
+    }
+    if ($val == null) {
         continue;
+    }
     $value = $_POST[$field];
-    $lastIndex = strlen($value)-1;
-    if(substr($value, $lastIndex) == '%'){
-        if($val['%'] == null || !$val['%']){
-            $err = $field.' n\'admet pas de %';
+    $lastIndex = strlen($value) - 1;
+    if (substr($value, $lastIndex) == '%') {
+        if ($val['%'] == null || !$val['%']) {
+            $err = $field . ' n\'admet pas de %';
             $post = false;
             break;
         }
         $value = substr($value, 0, $lastIndex);
         $percent[$field] = $value;
+    } else {
+        $percent[$field] = false;
     }
-    else
-       $percent[$field] = false;
-    
-    if($val['fct'] != null && !$val['fct']($value)){
-        $err = $field.' n\'est pas bien format&eacute;';
+
+    if ($val['fct'] != null && !$val['fct']($value)) {
+        $err = $field . ' n\'est pas bien format&eacute;';
         $post = false;
         break;
     }
@@ -126,61 +128,61 @@ foreach($fields as $field => $val){
 /**
  * Il y a toutes les données qu'il faut pour ajouter le bouzin
  */
-if($post){
-    $query = 'SELECT `race_id`, `grade_id` FROM `persos` WHERE `id`='.$_POST['mat'];
-    $result = mysql_query($query);
-    $data = mysql_fetch_object($result);
-    
-    $caracs_max = caracs_base_max($_POST['mat'],$data->race_id, $data->grade_id);
-    $caracs_max['pa'] += $caracs_max['pa_dec']/10;
+if ($post) {
+    $query = 'SELECT `race_id`, `grade_id` FROM `persos` WHERE `id`=' . $_POST['mat'];
+    $result = mysqli_query($conn, $query);
+    $data = mysqli_fetch_object($result);
+
+    $caracs_max = caracs_base_max($_POST['mat'], $data->race_id, $data->grade_id);
+    $caracs_max['pa'] += $caracs_max['pa_dec'] / 10;
     $caracs_max['recup_pv'] += 5;
 
     $names = '';
     $values = '';
-    foreach($fields as $field => $val){
-        if($val != null && $val['sql'] != null){
-            $names .= ','.$val['sql'];
-            if(isset($percent[$field]) && $percent[$field] != false){
+    foreach ($fields as $field => $val) {
+        if ($val != null && $val['sql'] != null) {
+            $names .= ',' . $val['sql'];
+            if (isset($percent[$field]) && $percent[$field] != false) {
                 $round_dec = 0;
-                if($field == 'pa')
+                if ($field == 'pa') {
                     $round_dec = 1;
-                $values .= ','.round($caracs_max[$val['carac']] * $_POST[$field] / 100, $round_dec);     
-            }
-            else{
-                $values .= ','.$_POST[$field];  
+                }
+                $values .= ',' . round($caracs_max[$val['carac']] * $_POST[$field] / 100, $round_dec);
+            } else {
+                $values .= ',' . $_POST[$field];
             }
         }
     }
     $query_alter = '
         INSERT INTO `caracs_alter_mag`
-            (`perso_id`'.$names.', `nb_tour`, `cassable`)
-            VALUES ('.$_POST['mat'].$values.', '.$_POST['duree'].', 0)';
-    mysql_query($query_alter) or die(mysql_error());
+            (`perso_id`' . $names . ', `nb_tour`, `cassable`)
+            VALUES (' . $_POST['mat'] . $values . ', ' . $_POST['duree'] . ', 0)';
+    mysqli_query($conn, $query_alter) or die(mysqli_error($conn));
 
-    
-    if(isset($_POST['eventId']) && $_POST['eventId'] != 0) {
+
+    if (isset($_POST['eventId']) && $_POST['eventId'] != 0) {
         $id = (is_numeric($_POST['eventId'])) ? $_POST['eventId'] : 1;
     } else {
-        $message = mysql_real_escape_string($_POST['event']);
+        $message = mysqli_real_escape_string($conn, $_POST['event']);
         $sql = "INSERT INTO evenements_texte(id, texte) VALUES ('','$message')";
-        mysql_query($sql);
+        mysqli_query($conn, $sql);
         $id = mysql_insert_id();
     }
 
     $evman = new EventManager();
 
     $ev = $evman->createEvent('anima');
-    $ev->setSource($_POST['mat'],eventFormatter::convertType('perso'));
-    $ev->infos->addPublicInfo('m',$id);
+    $ev->setSource($_POST['mat'], eventFormatter::convertType('perso'));
+    $ev->infos->addPublicInfo('m', $id);
 }
 ?>
 
 <h2>Bénir/maudir</h2>
 
-<?php 
-    if($err != ''){
-        echo '<p style="text-align:center;"><strong>'.$err.'</strong></p>';
-    }
+<?php
+if ($err != '') {
+    echo '<p style="text-align:center;"><strong>' . $err . '</strong></p>';
+}
 ?>
 
 <form method="post" action="index.php?mat=<?php echo $_GET['mat']?>&amp;p=<?php echo $_GET['p']?>&amp;a=<?php echo $_GET['a']?>" id="form">
@@ -274,13 +276,13 @@ if($post){
             </td>
             <td >
                 <select name="eventId">
-			<option value="0">Autre</option>
-		<?php
-			foreach($msgs as $id => $msg) {
-				echo '<option value="'.$id.'">'.$msg.'</option>';
-			}
-		?>
-		</select>
+            <option value="0">Autre</option>
+        <?php
+        foreach ($msgs as $id => $msg) {
+            echo '<option value="' . $id . '">' . $msg . '</option>';
+        }
+        ?>
+        </select>
             </td>
             <td colspan="2" rowspan="2">
                 <textarea name="event" style="width:100%; height:100%;"></textarea>
@@ -309,7 +311,7 @@ if($post){
 ?>
 <script type="text/javascript">
     <!--
-	var autocomplete_url =  "../../ajax/affi.php?sup=<?php echo $_GET['mat'];?>&";
+    var autocomplete_url =  "../../ajax/affi.php?sup=<?php echo $_GET['mat'];?>&";
 
         function handleDuree(){
             var val = jQuery('select[name="duree_ctrl"]').val();

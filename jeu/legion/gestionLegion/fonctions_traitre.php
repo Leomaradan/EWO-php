@@ -11,29 +11,33 @@ namespace jeu\legion;
 
 //use legions\LegionDAO as LegionDAO;
 
-function recup_pot_traitre($tueur_id, $camp, $depuis="") {
+function recup_pot_traitre($tueur_id, $camp, $depuis = "")
+{
 
     $sql = LegionDAO::getInstance();
     $query = 'SELECT factions.id AS id
 			FROM factions
-			LEFT JOIN persos ON persos.id = '.$tueur_id.'
+			LEFT JOIN persos ON persos.id = ' . $tueur_id . '
 				WHERE factions.race=persos.race_id AND factions.type=4';
     $stmt = $sql->query($query);
-	echo '<pre>';
+    echo '<pre>';
     $faction_id = '';
-    while($result = $sql->fetch($stmt,\PDO::FETCH_OBJ)){
-        if ($faction_id == '')
-            $faction_id = 'p1.faction_id = '.$result->id;
-        else
+    while ($result = $sql->fetch($stmt, \PDO::FETCH_OBJ)) {
+        if ($faction_id == '') {
+            $faction_id = 'p1.faction_id = ' . $result->id;
+        } else {
             $faction_id .= ' OR p1.faction_id = ' . $result->id;
+        }
     }
-    if($faction_id == '')
-    	$faction_id = '1 = 1';
+    if ($faction_id == '') {
+        $faction_id = '1 = 1';
+    }
 
-    if ($depuis == "")
+    if ($depuis == "") {
         $depuis = '0000-00-00 00:00:00';
-	
-   $sql = 'SELECT morgue.mat_victime, morgue.id_perso, morgue.date, morgue.nom_victime
+    }
+
+    $sql = 'SELECT morgue.mat_victime, morgue.id_perso, morgue.date, morgue.nom_victime
 			FROM morgue
                             JOIN persos p1
                                 ON p1.id = morgue.id_perso
@@ -43,24 +47,23 @@ function recup_pot_traitre($tueur_id, $camp, $depuis="") {
                                 ON r1.race_id = p1.race_id
                             JOIN races r2
                                 ON r2.race_id = p2.race_id
-                        WHERE ((('.$faction_id.') OR p1.grade_id >= 3 AND p1.galon_id >= 2) AND
-                            (morgue.date>="'.$depuis.'") AND
+                        WHERE (((' . $faction_id . ') OR p1.grade_id >= 3 AND p1.galon_id >= 2) AND
+                            (morgue.date>="' . $depuis . '") AND
                             r1.camp_id=r2.camp_id) AND
-                            r2.camp_id = '.$camp.'
+                            r2.camp_id = ' . $camp . '
                         GROUP BY morgue.mat_victime';
-    $resultat = mysql_query($sql) or die(mysql_error());
+    $resultat = mysqli_query($conn, $sql) or die(mysqli_error($conn));
     return $resultat;
 }
 
-function nvTraitre($perso_id) {
+function nvTraitre($perso_id)
+{
 
     $sql    = LegionDAO::getInstance();
     $query  = '
         UPDATE `persos` p SET
             p.grade_id = -3
-            WHERE p.id = "'.$perso_id.'"';
+            WHERE p.id = "' . $perso_id . '"';
 
     $stmt = $sql->exec($query);
 }
-
-?>

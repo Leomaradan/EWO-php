@@ -1,24 +1,24 @@
 <?php
 
-namespace site;
-
 /**
  * Affiche le menu dans le header de EWo
  *
  * Ne s'affiche uniquement que si la var $template_on existe.
- * 
+ *
  * @author Simonet Fabrice <aigleblanc@gmail.com>
  * @version 1.0
  * @package menus
  */
 
+namespace site;
+
 require_once __DIR__ . '/../conf/master.php';
 
-include_once(SERVER_ROOT."/persos/creation/controle_persos.php");
+$conn = bdd_connect('ewo');
+
+include_once(SERVER_ROOT . "/persos/creation/controle_persos.php");
 
 if (isset($template_on)) {
-
-
     $menu = array();
 
     $menu['jeu'][] = array('url' => SERVER_URL, 'nom' => 'Index', 'style' => 'bold');
@@ -57,12 +57,11 @@ if (isset($template_on)) {
                                     ON w.superieur = p.id
 				WHERE p.utilisateur_id = ' . $utilisateur_id;
 
-        $resultat1 = mysql_query($nbdems) or die(mysql_error());
-        $nbdem_ = mysql_fetch_array($resultat1);
+        $resultat1 = mysqli_query($conn, $nbdems) or die(mysqli_error($conn));
+        $nbdem_ = mysqli_fetch_array($resultat1);
         $nbdem = $nbdem_['nombre'];
 
         for ($inci = 1; $inci <= $_SESSION['persos']['inc']; $inci++) {
-
             $perso_id = $_SESSION['persos']['id'][$inci];
             if (isset($_SESSION['persos']['faction']['droits'][$inci])) {
                 $droits = $_SESSION['persos']['faction']['droits'][$inci];
@@ -76,8 +75,8 @@ if (isset($template_on)) {
 						INNER JOIN persos ON persos.id=$perso_id
 						WHERE wait_faction.faction_id = persos.faction_id AND demandeur = '1'";
 
-                $resultat1 = mysql_query($nbdems) or die(mysql_error());
-                $nbdem_ = mysql_fetch_array($resultat1);
+                $resultat1 = mysqli_query($conn, $nbdems) or die(mysqli_error($conn));
+                $nbdem_ = mysqli_fetch_array($resultat1);
                 $nbdem_fac += $nbdem_['nombre'];
             }
         }
@@ -96,7 +95,7 @@ if (isset($template_on)) {
         }
 
 
-		$nbperso = @$_SESSION['persos']['inc'];
+        $nbperso = @$_SESSION['persos']['inc'];
 
 
         $menu['utilisateur'][] = array('url' => SERVER_URL . '/persos/liste_persos.php', 'nom' => $nom, 'taille' => 'grand');
@@ -107,16 +106,16 @@ if (isset($template_on)) {
         $menu['utilisateur'][] = array('url' => SERVER_URL . '/persos/event/', 'nom' => 'Mes &eacute;v&eacute;nements');
         $menu['utilisateur'][] = array('url' => SERVER_URL . '/jeu/classement/', 'nom' => 'Classement');
 
-		if($nbperso > 0) {
-			$menu['utilisateur'][] = array('url' => SERVER_URL . '/jeu/affiliation/', 'nom' => 'Affiliations ' . $nom_aff);
-			$menu['utilisateur'][] = array('url' => SERVER_URL . '/jeu/legion/', 'nom' => 'Légions personnages' . $nom_fac);			
-		}		
-		
-		$creation = controleCreationPerso($utilisateur_id);
-        
+        if ($nbperso > 0) {
+            $menu['utilisateur'][] = array('url' => SERVER_URL . '/jeu/affiliation/', 'nom' => 'Affiliations ' . $nom_aff);
+            $menu['utilisateur'][] = array('url' => SERVER_URL . '/jeu/legion/', 'nom' => 'Légions personnages' . $nom_fac);
+        }
+
+        $creation = controleCreationPerso($utilisateur_id);
+
 // Fin "Savoir si l'utilisateur peut encore créer des persos."
         //$menu['utilisateur'][] = array('url' => SERVER_URL.'/affiliation/liste_persos.php', 'nom' => 'Affiliation personnages'.$nom_aff);
-        
+
 
         $menu['persos'][] = array('url' => SERVER_URL . '/persos/liste_persos.php', 'nom' => 'Pages de jeu');
 
@@ -145,11 +144,11 @@ if (isset($template_on)) {
 					ON bals.perso_src_id = persos.id
 					WHERE perso_dest_id = '$id_perso' AND flag_lu = '0'";
 
-            $resultat1 = mysql_query($nbbals) or die(mysql_error());
-            $nbbal = mysql_fetch_array($resultat1);
+            $resultat1 = mysqli_query($conn, $nbbals) or die(mysqli_error($conn));
+            $nbbal = mysqli_fetch_array($resultat1);
             $_SESSION['persos']['nbbal'][$inci] = $nbbal['nombre'];
 
-            $tot_bal+=$_SESSION['persos']['nbbal'][$inci];
+            $tot_bal += $_SESSION['persos']['nbbal'][$inci];
 
             if ($_SESSION['persos']['mortel'][$inci] != -1) {
                 $menu['persos'][] = array('url' => SERVER_URL . '/jeu/index.php?perso_id=' . $inci, 'nom' => '<span id="color_perso_' . $inci . '" ' . $color . ' >' . $_SESSION['persos']['nom'][$inci] . '</span>');
@@ -207,11 +206,10 @@ if (isset($template_on)) {
             $menu['admin'][] = array('url' => SERVER_URL . '/admin/', 'nom' => 'Powa Pannel');
             //$menu['admin'][] = array('url' => SERVER_URL.'/admin/', 'nom' => 'Administration');
             if ($is_at) {
-                $menu['admin'][] = array('url' => SERVER_URL .'/admin/antitriche/', 'nom' => 'At');
+                $menu['admin'][] = array('url' => SERVER_URL . '/admin/antitriche/', 'nom' => 'At');
             }
-        }
-		else if ($is_at) {
-            $menu['at'][] = array('url' => SERVER_URL .'/admin/antitriche/', 'nom' => 'At');
+        } elseif ($is_at) {
+            $menu['at'][] = array('url' => SERVER_URL . '/admin/antitriche/', 'nom' => 'At');
             //$menu['at'][] = array('url' => SERVER_URL.'/admin/antitriche', 'nom' => 'Administration');
         }
 
@@ -227,7 +225,6 @@ if (isset($template_on)) {
           $menu['anim'][] = array('url' => SERVER_URL.'/news/liste_news.php', 'nom' => 'Gestion des News');
           } */
     } else {
-
         $menu['forum'][] = array('url' => SERVER_URL . '/forum/', 'nom' => 'Forum');
 
         $menu['login'][] = array('url' => SERVER_URL . '/compte/connexion/', 'nom' => 'Connexion');
@@ -238,12 +235,11 @@ if (isset($template_on)) {
             <ul id="menuDeroulant">
                 <?php
                 foreach ($menu as $nom => $sousmenu) {
-
                     $html_id = (isset($sousmenu[0]['id'])) ? ' id="' . $sousmenu[0]['id'] . '"' : '';
                     $html_class = (isset($sousmenu[0]['class'])) ? ' class="' . $sousmenu[0]['class'] . '"' : '';
                     ?>
                     <li <?php echo $html_id;
-            echo $html_class
+                    echo $html_class
                     ?>>
 
                         <a href="<?php echo $sousmenu[0]['url']; ?>"><?php echo $sousmenu[0]['nom']; ?></a>
@@ -251,18 +247,17 @@ if (isset($template_on)) {
                         <?php
                         if (count($sousmenu) > 1) {
                             ?><ul><?php
-                    foreach ($sousmenu as $k => $item) {
-                        if ($k != 0) {
-
-                            $html_id = (isset($item['id'])) ? ' id="' . $item['id'] . '"' : '';
-                            $html_class = (isset($item['class'])) ? '  class="' . $item['class'] . '"' : '';
-                            echo '<li ' . $html_id . $html_class . '><a href="' . $item['url'] . '">' . $item['nom'] . '</a></li>';
+foreach ($sousmenu as $k => $item) {
+    if ($k != 0) {
+        $html_id = (isset($item['id'])) ? ' id="' . $item['id'] . '"' : '';
+        $html_class = (isset($item['class'])) ? '  class="' . $item['class'] . '"' : '';
+        echo '<li ' . $html_id . $html_class . '><a href="' . $item['url'] . '">' . $item['nom'] . '</a></li>';
+    }
+}
+?></ul><?php
                         }
-                    }
-                            ?></ul><?php
-            }
-            ?>
-                    </li>				
+                        ?>
+                    </li>               
                     <?php
                 }
                 ?>

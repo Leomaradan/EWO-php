@@ -1,7 +1,5 @@
 <?php
 
-namespace site\boutique;
-
 /**
  * Index de la boutique de ewo
  *
@@ -9,6 +7,9 @@ namespace site\boutique;
  * @version 1.0
  * @package site\boutique
  */
+
+namespace site\boutique;
+
 //-- Header --
 require_once __DIR__ . '/../../conf/master.php';
 

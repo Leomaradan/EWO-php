@@ -1,17 +1,20 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Description of newPHPClass
  *
  * @author Leo
  */
-class JSLoader implements \Iterator, \Countable {
-    
+
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+namespace template;
+
+class JSLoader implements \Iterator, \Countable
+{
     private $core = array();
     private $lib = array();
     private $script = array();
@@ -19,143 +22,156 @@ class JSLoader implements \Iterator, \Countable {
     public $variables_var = array();
     public $variables = array();
     private $url;
-    
-    public function __construct($url) {
+
+    public function __construct($url)
+    {
         $this->url = $url;
     }
 
-    public function addCore($js) {
+    public function addCore($js)
+    {
         $url = $js;
-        if(!in_array($url, $this->core)) {
+        if (!in_array($url, $this->core)) {
             $this->core[] = $url;
         }
     }
-    
-    public function addLib($js) {
-        $url = 'lib/'.$js;
-        
-        if(!in_array($url, $this->lib)) {
+
+    public function addLib($js)
+    {
+        $url = 'lib/' . $js;
+
+        if (!in_array($url, $this->lib)) {
             $this->lib[] = $url;
-        }        
-    }
-    
-    public function addScript($js) {
-        $url = 'jeu/'.$js;
-        
-        if(!in_array($url, $this->script)) {
-            $this->script[] = $url;
-        }        
-    } 
-    
-    public function addVariables($name,$value,$raw = false) {
-        if($raw) {
-            $this->variables_var[$name] = $value;
-        } else {
-            $this->variables_var[$name] = '"'.$value.'"';
         }
-        
-    }
-    
-    public function setVariables($name,$value,$raw = false) {
-        if($raw) {
-            $this->variables[$name] = $value;
-        } else {
-            $this->variables[$name] = '"'.$value.'"';
-        }        
     }
 
-    public function prepare() {
+    public function addScript($js)
+    {
+        $url = 'jeu/' . $js;
+
+        if (!in_array($url, $this->script)) {
+            $this->script[] = $url;
+        }
+    }
+
+    public function addVariables($name, $value, $raw = false)
+    {
+        if ($raw) {
+            $this->variables_var[$name] = $value;
+        } else {
+            $this->variables_var[$name] = '"' . $value . '"';
+        }
+    }
+
+    public function setVariables($name, $value, $raw = false)
+    {
+        if ($raw) {
+            $this->variables[$name] = $value;
+        } else {
+            $this->variables[$name] = '"' . $value . '"';
+        }
+    }
+
+    public function prepare()
+    {
         $arr = array();
-        
-        foreach($this->core as $js) {
-          $arr[] = array('js' => $js, 'type' => 'core');  
+
+        foreach ($this->core as $js) {
+            $arr[] = array('js' => $js, 'type' => 'core');
         }
-        
-        foreach($this->lib as $js) {
-          $arr[] = array('js' => $js, 'type' => 'lib');  
+
+        foreach ($this->lib as $js) {
+            $arr[] = array('js' => $js, 'type' => 'lib');
         }
-        
-        foreach($this->script as $js) {
-          $arr[] = array('js' => $js, 'type' => 'script');  
-        }        
+
+        foreach ($this->script as $js) {
+            $arr[] = array('js' => $js, 'type' => 'script');
+        }
 
         $this->array = $arr;
     }
-    
-    public function exportLoad() {
-        
+
+    public function exportLoad()
+    {
+
         echo '<script type="text/javascript">';
-        
-        if(count($this->variables_var) > 0) {
-            foreach($this->variables_var as $k => $v) {
-                echo 'var '.$k.' = ' . $v . ';' . PHP_EOL;
+
+        if (count($this->variables_var) > 0) {
+            foreach ($this->variables_var as $k => $v) {
+                echo 'var ' . $k . ' = ' . $v . ';' . PHP_EOL;
             }
         }
-        
-        if(count($this->variables) > 0) {
-            foreach($this->variables as $k => $v) {
-                echo '    '.$k.' = ' . $v . ';' . PHP_EOL;
+
+        if (count($this->variables) > 0) {
+            foreach ($this->variables as $k => $v) {
+                echo '    ' . $k . ' = ' . $v . ';' . PHP_EOL;
             }
-        }        
-        
-        echo '</script><script type="text/javascript" src="'.SERVER_URL.'/js/require.min.js"></script>';
+        }
+
+        echo '</script><script type="text/javascript" src="' . SERVER_URL . '/js/require.min.js"></script>';
 
         $this->prepare();
 
         /*echo "<script type='text/javascript'>requirejs.config({
                 baseUrl: 'http://localhost/ewo/js'
               });";*/
-        echo "<script type='text/javascript'>";        
-        
+        echo "<script type='text/javascript'>";
 
-		
-        if(count($this) > 0) {
+
+
+        if (count($this) > 0) {
             $i = 0;
             foreach ($this as $load) {
-					
-                if(file_exists(SERVER_ROOT . '/js/' . $load['js'] . '.min.js')) {
-                    echo 'requirejs(["'.SERVER_URL.'/js/'.$load['js'].'.min.js"], function() {' . PHP_EOL;
+                if (file_exists(SERVER_ROOT . '/js/' . $load['js'] . '.min.js')) {
+                    echo 'requirejs(["' . SERVER_URL . '/js/' . $load['js'] . '.min.js"], function() {' . PHP_EOL;
 
                     $i++;
-                } elseif(file_exists(SERVER_ROOT . '/js/' . $load['js'] . '.js')) {
-                    echo 'requirejs(["'.SERVER_URL.'/js/'.$load['js'].'.js"], function() {' . PHP_EOL;
+                } elseif (file_exists(SERVER_ROOT . '/js/' . $load['js'] . '.js')) {
+                    echo 'requirejs(["' . SERVER_URL . '/js/' . $load['js'] . '.js"], function() {' . PHP_EOL;
 
                     $i++;
                 } /*else {
                     echo $this->url . '/js/' . $load['js'] . '.js';
                 }*/
             }
-            
-            echo str_repeat("})", $i).';</script>';
 
-        }   
-
+            echo str_repeat("})", $i) . ';</script>';
+        }
     }
-    
-    public function current() {
+
+    #[\ReturnTypeWillChange]
+    public function current()
+    {
         return current($this->array);
     }
 
-    public function key() {
+    #[\ReturnTypeWillChange]
+    public function key()
+    {
         return key($this->array);
     }
 
-    public function next() {
+    #[\ReturnTypeWillChange]
+    public function next()
+    {
         return next($this->array);
     }
 
-    public function rewind() {
+    #[\ReturnTypeWillChange]
+    public function rewind()
+    {
         return reset($this->array);
     }
 
-    public function valid() {
+    #[\ReturnTypeWillChange]
+    public function valid()
+    {
         return key($this->array) !== null;
     }
 
-    public function count() {
+    #[\ReturnTypeWillChange]
+    public function count()
+    {
         return count($this->array);
     }
-
 }
-
-?>

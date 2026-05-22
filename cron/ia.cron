@@ -15,13 +15,13 @@ $db = ConnecteurDAO::getInstance();
 
 $db->query("SELECT id, time FROM persos_ia WHERE time <= now() LIMIT 10");
 
-$liste = $db->fetchAll_row();
+$liste = $db->fetchAllRow();
 $cpt = 0;
 if($liste != null)
 {       
 	foreach($liste as $ia)
 	{
-                MicroIA::Run($ia[0]);
+                MicroIA::run($ia[0]);
                 $cpt++;
                 echo $ia[0].' / '.$ia[1].PHP_EOL;
 	}

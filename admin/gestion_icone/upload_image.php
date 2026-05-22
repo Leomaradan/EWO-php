@@ -1,33 +1,34 @@
 <?php
+
 $root_url = "./../..";
 include __DIR__ . '/../../conf/master.php';
-include(SERVER_ROOT."/template/header_new.php");
+include(SERVER_ROOT . "/template/header_new.php");
 //-- Header --
-include($root_url."/conf/master.php");
+include($root_url . "/conf/master.php");
 /*-- Connexion at ou admin requise --*/
-ControleAcces('admin',1);
+ControleAcces('admin', 1);
 /*-----------------------------*/
 
 $ewo = bdd_connect('ewo');
 
 //-- Nom de la race en fonction de son id
-if ($_POST['race'] != 0){
-	$info = "SELECT nom FROM races WHERE race_id = '".mysql_real_escape_string($_POST['race'])."' AND grade_id = '-2'";																							
-	$resultat = mysql_query ($info) or die (mysql_error());
-	$race_nom = mysql_fetch_array ($resultat);
-}else{
-	$race_nom['nom'] = 'perso';
+if ($_POST['race'] != 0) {
+    $info = "SELECT nom FROM races WHERE race_id = '" . mysqli_real_escape_string($conn, $_POST['race']) . "' AND grade_id = '-2'";
+    $resultat = mysqli_query($conn, $info) or die(mysqli_error($conn));
+    $race_nom = mysql_fetch_array($resultat);
+} else {
+    $race_nom['nom'] = 'perso';
 }
 
 //----------------------------
 //  DEFINITION DES VARIABLES
 //----------------------------
 
-$target     = "./../../images/persos/".strToLower($race_nom['nom'])."/";  // Répertoire cible
+$target     = "./../../images/persos/" . strToLower($race_nom['nom']) . "/";  // Répertoire cible
 $max_size   = 10000000000;     // Taille max en octets du fichier
 $width_max  = 50;        // Largeur max de l'image en pixels
 $height_max = 50;        // Hauteur max de l'image en pixels
-$prefix     = "persos/".strToLower($race_nom['nom'])."/";  // Chemin du dépôt en fonction de la race.
+$prefix     = "persos/" . strToLower($race_nom['nom']) . "/";  // Chemin du dépôt en fonction de la race.
 
 //-- Test de l'existence du dossier devant contenir les icones en fonction de la race, le cas échéant, on le créé
 @mkDir($target);
@@ -46,44 +47,42 @@ $tmp        = $_FILES['fichier']['tmp_name'];
 
 
 // On vérifie si le champ est rempli
-if(!empty($_FILES['fichier']['name'])) {
+if (!empty($_FILES['fichier']['name'])) {
     // On vérifie l'extension du fichier
-    if((substr($nom_file, -3) == 'jpg') OR (substr($nom_file, -3) == 'png') OR (substr($nom_file, -3) == 'gif')) {
+    if ((substr($nom_file, -3) == 'jpg') or (substr($nom_file, -3) == 'png') or (substr($nom_file, -3) == 'gif')) {
         // On récupère les dimensions du fichier
         $infos_img = getimagesize($_FILES['fichier']['tmp_name']);
-        
+
         // On vérifie les dimensions et taille de l'image
-        if(($infos_img[0] <= $width_max) && ($infos_img[1] <= $height_max) && ($_FILES['fichier']['size'] <= $max_size)) {
+        if (($infos_img[0] <= $width_max) && ($infos_img[1] <= $height_max) && ($_FILES['fichier']['size'] <= $max_size)) {
             // Si c'est OK, on teste l'upload
-		
-            $cible = $prefix.$_FILES['fichier']['name'];
-            if(move_uploaded_file($_FILES['fichier']['tmp_name'],$target.$_FILES['fichier']['name'])) {
+
+            $cible = $prefix . $_FILES['fichier']['name'];
+            if (move_uploaded_file($_FILES['fichier']['tmp_name'], $target . $_FILES['fichier']['name'])) {
               // Si upload OK
-           		
-  						//-- Mise à jour de la base avec le lien de l'avatar
-							$sql = mysql_query("INSERT INTO icone_persos (id, race_id, grade_id, xp_min, xp_max, icone_url) VALUES ('', '".$_POST['race']."','".$_POST['grade']."', '".$_POST['px']."', '".$_POST['px_max']."', '$cible')");
-              
-							echo "<script language='javascript' type='text/javascript' >document.location='./'</script>";exit;
-               
+
+                        //-- Mise à jour de la base avec le lien de l'avatar
+                            $sql = mysqli_query($conn, "INSERT INTO icone_persos (id, race_id, grade_id, xp_min, xp_max, icone_url) VALUES ('', '" . $_POST['race'] . "','" . $_POST['grade'] . "', '" . $_POST['px'] . "', '" . $_POST['px_max'] . "', '$cible')");
+
+                            echo "<script language='javascript' type='text/javascript' >document.location='./'</script>";
+                exit;
             } else {
                 // Sinon on affiche une erreur système
-                echo "<h2>Probleme</h2><p align='center'>Problème lors de l\'upload !</b><br /><br />', ".$_FILES['fichier']['error'].", '</p><p align='center'>[<a href='".$_SERVER['HTTP_REFERER']."'>Retour</a>]</p>";
+                echo "<h2>Probleme</h2><p align='center'>Problème lors de l\'upload !</b><br /><br />', " . $_FILES['fichier']['error'] . ", '</p><p align='center'>[<a href='" . $_SERVER['HTTP_REFERER'] . "'>Retour</a>]</p>";
                 //include("../template/footer.php");
             }
         } else {
             // Sinon on affiche une erreur pour les dimensions et taille de l'image
-            echo "<h2>Probleme</h2><p align='center'>Problème dans les dimensions ou taille de l\'image !</p><p align='center'>[<a href='".$_SERVER['HTTP_REFERER']."'>Retour</a>]</p>";
+            echo "<h2>Probleme</h2><p align='center'>Problème dans les dimensions ou taille de l\'image !</p><p align='center'>[<a href='" . $_SERVER['HTTP_REFERER'] . "'>Retour</a>]</p>";
             //include("../template/footer.php");
         }
     } else {
         // Sinon on affiche une erreur pour l'extension
-        echo "<h2>Probleme</h2><p align='center'>Votre image n\'en est pas une !</p><p align='center'>[<a href='".$_SERVER['HTTP_REFERER']."'>Retour</a>]</p>";
+        echo "<h2>Probleme</h2><p align='center'>Votre image n\'en est pas une !</p><p align='center'>[<a href='" . $_SERVER['HTTP_REFERER'] . "'>Retour</a>]</p>";
         //include("../template/footer.php");
     }
 } else {
     // Sinon on affiche une erreur pour le champ vide
-    echo "<h2>Probleme</h2><p align='center'>Le champ du formulaire est vide !</p><p align='center'>[<a href='".$_SERVER['HTTP_REFERER']."'>Retour</a>]</p>";    
+    echo "<h2>Probleme</h2><p align='center'>Le champ du formulaire est vide !</p><p align='center'>[<a href='" . $_SERVER['HTTP_REFERER'] . "'>Retour</a>]</p>";
     //include("../template/footer.php");
 }
-
-?>

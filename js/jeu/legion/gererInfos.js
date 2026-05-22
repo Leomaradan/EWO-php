@@ -1,3 +1,3 @@
-    $(document).ready( function () {
-        $('#descr').ckeditor({ toolbar : 'Basic' }  );
-    });
+$(document).ready(function () {
+    $('#descr').ckeditor({ toolbar: 'Basic' });
+});

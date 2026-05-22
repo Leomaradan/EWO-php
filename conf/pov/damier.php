@@ -1,20 +1,22 @@
 <?php
 
-function getmicrotime() {
+function getmicrotime()
+{
     list($usec, $sec) = explode(" ", microtime());
     return ((float) $usec + (float) $sec);
 }
 
-function recurse($search, $arr) {
-	foreach($arr as $x => $line) {
-		foreach($line as $y => $col) {
-			if($col == $search) {
-				return array($x,$y);
-			}
-		}
-	}
-	
-	return false;
+function recurse($search, $arr)
+{
+    foreach ($arr as $x => $line) {
+        foreach ($line as $y => $col) {
+            if ($col == $search) {
+                return array($x,$y);
+            }
+        }
+    }
+
+    return false;
 }
 
 $taille = 18;
@@ -25,12 +27,12 @@ $debut = getmicrotime();
 
 $array = array();
 
-for($ligne = 0; $ligne < $taille; $ligne++) {
-	$arr = array();
-	for($colonne = 0; $colonne < $taille; $colonne++) {
-		$arr[] = 0;
-	}
-	$array[] = $arr;
+for ($ligne = 0; $ligne < $taille; $ligne++) {
+    $arr = array();
+    for ($colonne = 0; $colonne < $taille; $colonne++) {
+        $arr[] = 0;
+    }
+    $array[] = $arr;
 }
 
 $array[11][5] = 2;
@@ -54,13 +56,13 @@ $array[8][14] = 2;
 
 
 /*$array = array(
-	array('P',0,0,0,0,0,0),
-	array(0,0,0,0,0,0,0),
-	array(0,0,0,0,0,0,0),
-	array(0,0,0,0,0,0,0),
-	array(0,0,0,0,0,0,0),
-	array(0,0,0,0,0,0,0),
-	array(0,0,0,0,0,0,0)
+    array('P',0,0,0,0,0,0),
+    array(0,0,0,0,0,0,0),
+    array(0,0,0,0,0,0,0),
+    array(0,0,0,0,0,0,0),
+    array(0,0,0,0,0,0,0),
+    array(0,0,0,0,0,0,0),
+    array(0,0,0,0,0,0,0)
 );*/
 
 /*$distance_x = 9;
@@ -115,137 +117,140 @@ echo (4 /$distance) * 4 . '<br>';
 * @return (Array of couples forming the line) Eg: array(array(2,100), array(3, 101), array(4, 102), array(5, 103))
 * Public domain Av'tW
 */
-function bresenham($x1, $y1, $x2, $y2, $guaranteeEndPoint=true) {
-	$xBegin = $x1;
-	$yBegin = $y1;
-	$xEnd = $x2;
-	$yEnd = $y2;
-	$dots = array();        // Array of couples, returned array</p>
+function bresenham($x1, $y1, $x2, $y2, $guaranteeEndPoint = true)
+{
+    $xBegin = $x1;
+    $yBegin = $y1;
+    $xEnd = $x2;
+    $yEnd = $y2;
+    $dots = array();        // Array of couples, returned array</p>
 
-	$steep = abs($y2 - $y1) > abs($x2 - $x1);
+    $steep = abs($y2 - $y1) > abs($x2 - $x1);
 
-	// Swap some coordinateds in order to generalize
-	if ($steep) {
-		$tmp = $x1;
-		$x1 = $y1;
-		$y1 = $tmp;
-		$tmp = $x2;
-		$x2 = $y2;
-		$y2 = $tmp;
-	}
-	
-	if ($x1 > $x2) {
-		$tmp = $x1;
-		$x1 = $x2;
-		$x2 = $tmp;
-		$tmp = $y1;
-		$y1 = $y2;
-		$y2 = $tmp;
-	}
-	
-	$deltax = floor($x2 - $x1) + 0.5;
-	$deltay = floor(abs($y2 - $y1)) + 0.5;
-	$error = 0;
-	$deltaerr = $deltay / $deltax;
-	$y = $y1;
-	$ystep = ($y1 > $y2) ? 1 : -1;
+    // Swap some coordinateds in order to generalize
+    if ($steep) {
+        $tmp = $x1;
+        $x1 = $y1;
+        $y1 = $tmp;
+        $tmp = $x2;
+        $x2 = $y2;
+        $y2 = $tmp;
+    }
 
-	for ($x = $x1; $x < $x2; $x++) {
-		$dots[] = $steep ? array($y, $x) : array($x, $y);
-		$error += $deltaerr;
+    if ($x1 > $x2) {
+        $tmp = $x1;
+        $x1 = $x2;
+        $x2 = $tmp;
+        $tmp = $y1;
+        $y1 = $y2;
+        $y2 = $tmp;
+    }
+
+    $deltax = floor($x2 - $x1) + 0.5;
+    $deltay = floor(abs($y2 - $y1)) + 0.5;
+    $error = 0;
+    $deltaerr = $deltay / $deltax;
+    $y = $y1;
+    $ystep = ($y1 > $y2) ? 1 : -1;
+
+    for ($x = $x1; $x < $x2; $x++) {
+        $dots[] = $steep ? array($y, $x) : array($x, $y);
+        $error += $deltaerr;
 
         if ($error >= 0.5) {
-			$y += $ystep;
-			$error -= 1;
-		}
-	}
+            $y += $ystep;
+            $error -= 1;
+        }
+    }
 
-	if ($guaranteeEndPoint) {
-		// Bresenham doesn't always include the specified end point in the result line, add it now.
-		if ((($xEnd - $x) * ($xEnd - $x) + ($yEnd - $y) * ($yEnd - $y)) <
-		(($xBegin - $x) * ($xBegin - $x) + ($yBegin - $y) * ($yBegin - $y))) {
-			// Then we're closer to the end
-			$dots[] = array($xEnd, $yEnd);
-		} else {
-			$dots[] = array($xBegin, $yBegin);
-		}
-	}
-		
-	return $dots;
+    if ($guaranteeEndPoint) {
+        // Bresenham doesn't always include the specified end point in the result line, add it now.
+        if (
+            (($xEnd - $x) * ($xEnd - $x) + ($yEnd - $y) * ($yEnd - $y)) <
+            (($xBegin - $x) * ($xBegin - $x) + ($yBegin - $y) * ($yBegin - $y))
+        ) {
+            // Then we're closer to the end
+            $dots[] = array($xEnd, $yEnd);
+        } else {
+            $dots[] = array($xBegin, $yBegin);
+        }
+    }
+
+    return $dots;
 }
 /*
 echo "<table border='1' width='".($taille*40)."px' height='".($taille*40)."px'>";
 
 foreach($array as $x => $ligne) {
-	echo "<tr>";
-	foreach($ligne as $y => $value) {
-		echo "<td class='classe$value'>($x,$y)</td>";
-	}
-	echo "</tr>";	
+    echo "<tr>";
+    foreach($ligne as $y => $value) {
+        echo "<td class='classe$value'>($x,$y)</td>";
+    }
+    echo "</tr>";
 }
 echo '</table>';*/
 
 $cases = array();
-for($i=0;$i<$taille;$i++) {
-	$cases[] = array($i,$taille-1);
-	$cases[] = array($taille-1,$i);
+for ($i = 0; $i < $taille; $i++) {
+    $cases[] = array($i,$taille - 1);
+    $cases[] = array($taille - 1,$i);
 }
 
 $liste_rayon = array();
 
 parcours($cases, $array);
 
-function parcours($cases, &$array) {
+function parcours($cases, &$array)
+{
 
-	global $liste_rayon;
+    global $liste_rayon;
 
-	foreach($cases as $rayon) {
+    foreach ($cases as $rayon) {
+        $position_x = $rayon[0];
+        $position_y = $rayon[1];
 
-		$position_x = $rayon[0];
-		$position_y = $rayon[1];
+        $line = bresenham(0, 0, $position_x, $position_y, false);
+        $line[] = array($position_x, $position_y);
 
-		$line = bresenham(0, 0, $position_x, $position_y, false);
-		$line[] = array($position_x, $position_y);
-		
-		$liste_rayon[] = $line;
-		
-		$couleur = 1;
-		foreach($line as $point) {
-			$x = abs($point[0]);
-			$y = abs($point[1]);
-			
-			if($array[$x][$y] == 2) {
-				$couleur = 3;
-			} else {
-				$array[$x][$y] = $couleur;	
-			}
-		}
-	}
+        $liste_rayon[] = $line;
+
+        $couleur = 1;
+        foreach ($line as $point) {
+            $x = abs($point[0]);
+            $y = abs($point[1]);
+
+            if ($array[$x][$y] == 2) {
+                $couleur = 3;
+            } else {
+                $array[$x][$y] = $couleur;
+            }
+        }
+    }
 }
 
 $recurse = true;
 /*
 do {
-	$case = recurse(0, $array);
-		
-	if($case == false) {
-		$recurse = false;
-	} else {
-		parcours(array($case), $array);
-	}
+    $case = recurse(0, $array);
+
+    if($case == false) {
+        $recurse = false;
+    } else {
+        parcours(array($case), $array);
+    }
 } while($recurse);*/
 
 //$array[$position_x][$position_y] = 1;
 //$array[$position_x][$position_y] = 1;
-			 
-echo "<table border='1' width='".($taille*40)."px' height='".($taille*40)."px'>";
 
-foreach($array as $x => $ligne) {
-	echo "<tr>";
-	foreach($ligne as $y => $value) {
-		echo "<td class='classe$value'>($x,$y)</td>";
-	}
-	echo "</tr>";	
+echo "<table border='1' width='" . ($taille * 40) . "px' height='" . ($taille * 40) . "px'>";
+
+foreach ($array as $x => $ligne) {
+    echo "<tr>";
+    foreach ($ligne as $y => $value) {
+        echo "<td class='classe$value'>($x,$y)</td>";
+    }
+    echo "</tr>";
 }
 echo '</table>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -255,12 +260,12 @@ echo '</table>
 	$(".classe3").css("background-color", "darkcyan");
 	$(".classe4").css("background-color", "red");
 });</script>
-';	
+';
 
 echo '<pre>';
 //print_r($liste_rayon);
 echo '</pre>';
 
 $fin = getmicrotime();
-$page_time = round($fin-$debut, 3);
-echo "Page générée en ".$page_time." secondes.";
+$page_time = round($fin - $debut, 3);
+echo "Page gï¿½nï¿½rï¿½e en " . $page_time . " secondes.";

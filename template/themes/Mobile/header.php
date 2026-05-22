@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Template par defaut - Header
  *
@@ -10,7 +11,7 @@
 require_once __DIR__ . '/../../../conf/master.php';
 
 $template_vanilla = true;
-$_SESSION['utilisateur']['template_mage']=true;
+$_SESSION['utilisateur']['template_mage'] = true;
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -18,16 +19,16 @@ $_SESSION['utilisateur']['template_mage']=true;
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <?php
-	if(isset($header['title'])){
-		echo "<title>".$header['title']." | Eternal War One - EWO</title>";
-	}else{
-		echo "<title>Eternal War One - EWO</title>";
-	}
-	if(isset($header['desc'])){
-		echo "<meta name='description' content=\"".$header['desc']."\" />";
-	}else{
-		echo "<meta name='description' content=\"Eternal War One est un jeu multi-joueur où une armée de démons, d'anges et d'humains s'affrontent dans une lutte sans merci pour leur propre survie.\" />";
-	}
+if (isset($header['title'])) {
+    echo "<title>" . $header['title'] . " | Eternal War One - EWO</title>";
+} else {
+    echo "<title>Eternal War One - EWO</title>";
+}
+if (isset($header['desc'])) {
+    echo "<meta name='description' content=\"" . $header['desc'] . "\" />";
+} else {
+    echo "<meta name='description' content=\"Eternal War One est un jeu multi-joueur où une armée de démons, d'anges et d'humains s'affrontent dans une lutte sans merci pour leur propre survie.\" />";
+}
 ?>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
@@ -66,9 +67,9 @@ $_SESSION['utilisateur']['template_mage']=true;
 <!-- For first- and second-generation iPad: -->
 <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://www.ewo.fr/img/apple-touch-icon-72x72-precomposed.png">
 <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
-<link rel="apple-touch-icon-precomposed" sizes="57x57" href="http://www.ewo.fr/img/apple-touch-icon-57x57-precomposed.png">		
+<link rel="apple-touch-icon-precomposed" sizes="57x57" href="http://www.ewo.fr/img/apple-touch-icon-57x57-precomposed.png">     
 <!-- Fallback -->
-<link rel="apple-touch-icon-precomposed" href="http://www.ewo.fr/img/apple-touch-icon-precomposed.png">		
+<link rel="apple-touch-icon-precomposed" href="http://www.ewo.fr/img/apple-touch-icon-precomposed.png">     
 
 
 <meta name="google-site-verification" content="rZADXCyuEh8aaWXfEkxQxz4uSd_X0k7Ksfw0Td7gimQ" />
@@ -77,72 +78,68 @@ $_SESSION['utilisateur']['template_mage']=true;
 
 <?php
 
-	echo '<link rel="stylesheet" href="'.SERVER_URL.$template_url.'/css/jquery-ui.css" type="text/css" />';
+    echo '<link rel="stylesheet" href="' . SERVER_URL . $template_url . '/css/jquery-ui.css" type="text/css" />';
 
-        
-    include(SERVER_ROOT.'/template/less/lessc.inc.php');
-    try {
-        $less = new lessc();
 
-        $less->addImportDir(SERVER_ROOT . $template_url.'/less');
-        $less->addImportDir(SERVER_ROOT . '/site/fonts');
-        //$less->setFormatter("compressed");
+    include(SERVER_ROOT . '/template/less/lessc.inc.php');
+try {
+    $less = new lessc();
 
-        $less->setVariables(array(
-        "template" => "'..'",
-		"root" => "'".SERVER_URL."'"
-        ));
+    $less->addImportDir(SERVER_ROOT . $template_url . '/less');
+    $less->addImportDir(SERVER_ROOT . '/site/fonts');
+    //$less->setFormatter("compressed");
 
-        
-        $less->checkedCompile(SERVER_ROOT . $template_url.'/less/ewo.less', SERVER_ROOT . $template_url.'/css/ewo_'.md5(SERVER_URL).'.css'); 
-       
-    } catch (Exception $e) {
-        // Nothing to do here
-    }
-    echo '<link rel="stylesheet" href="'. SERVER_URL . $template_url.'/css/ewo_'.md5(SERVER_URL).'.css" type="text/css" />' . PHP_EOL;
-    
+    $less->setVariables(array(
+    "template" => "'..'",
+    "root" => "'" . SERVER_URL . "'"
+    ));
+
+
+    $less->checkedCompile(SERVER_ROOT . $template_url . '/less/ewo.less', SERVER_ROOT . $template_url . '/css/ewo_' . md5(SERVER_URL) . '.css');
+} catch (Exception $e) {
+    // Nothing to do here
+}
+    echo '<link rel="stylesheet" href="' . SERVER_URL . $template_url . '/css/ewo_' . md5(SERVER_URL) . '.css" type="text/css" />' . PHP_EOL;
+
     // Fichiers CSS supplémentaires
-    if(isset($css_files)) {
-        $nom = md5($css_files . SERVER_URL);
-        $array = explode(",", $css_files);
+if (isset($css_files)) {
+    $nom = md5($css_files . SERVER_URL);
+    $array = explode(",", $css_files);
 
-        if(file_exists(SERVER_ROOT . $template_url.'/css/generate/'.$nom.'.css')) {
-			$time_gen = filemtime(SERVER_ROOT . $template_url.'/css/generate/'.$nom.'.css');
-        } else {
-           $time_gen = 0; 
-        }
-        $compile = false;
-        $import = '@import url(couleurs.less);';
-
-        foreach ($array as $link) {
-            
-            $less_url = SERVER_ROOT . $template_url.'/less/'.$link.'.less';
-   
-            if(filemtime($less_url) > $time_gen) {
-                $compile = true;
-            }
-            
-            $import .= '@import url('.$link.'.less);';
-            
-        }
-        
-        if($compile) {
-            try {  
-				$compiled = $less->compile($import);
-				
-				if(substr(decoct( fileperms(SERVER_ROOT . $template_url.'/css/generate/') ), 2) != 777) {
-					chmod(SERVER_ROOT . $template_url.'/css/generate/', 777);
-				}
-				
-				file_put_contents(SERVER_ROOT . $template_url.'/css/generate/'.$nom.'.css', $compiled);
-            } catch(Exception $e) {
-                // Nothing to do here
-            }
-            
-        }
-        
-        echo '<link rel="stylesheet" href="'.SERVER_URL . $template_url.'/css/generate/'.$nom.'.css" type="text/css" />' . PHP_EOL;        
+    if (file_exists(SERVER_ROOT . $template_url . '/css/generate/' . $nom . '.css')) {
+        $time_gen = filemtime(SERVER_ROOT . $template_url . '/css/generate/' . $nom . '.css');
+    } else {
+        $time_gen = 0;
     }
+    $compile = false;
+    $import = '@import url(couleurs.less);';
+
+    foreach ($array as $link) {
+        $less_url = SERVER_ROOT . $template_url . '/less/' . $link . '.less';
+
+        if (filemtime($less_url) > $time_gen) {
+            $compile = true;
+        }
+
+        $import .= '@import url(' . $link . '.less);';
+    }
+
+    if ($compile) {
+        try {
+            $compiled = $less->compile($import);
+
+            if (substr(decoct(fileperms(SERVER_ROOT . $template_url . '/css/generate/')), 2) != 777) {
+                chmod(SERVER_ROOT . $template_url . '/css/generate/', 777);
+            }
+
+            file_put_contents(SERVER_ROOT . $template_url . '/css/generate/' . $nom . '.css', $compiled);
+        } catch (Exception $e) {
+            // Nothing to do here
+        }
+    }
+
+    echo '<link rel="stylesheet" href="' . SERVER_URL . $template_url . '/css/generate/' . $nom . '.css" type="text/css" />' . PHP_EOL;
+}
 ?>
 
 <link rel="icon" type="image/png" href="<?php echo SERVER_URL; ?>/images/site/favicon.png" />
@@ -164,7 +161,7 @@ $js->addScript('jeu');
 $js->addVariables('root_url', SERVER_URL);
 
 // Gestionnaire d'autologin
-include(SERVER_ROOT."/autologin.php");
+include(SERVER_ROOT . "/autologin.php");
 
 ?>
 </head>
@@ -173,8 +170,8 @@ include(SERVER_ROOT."/autologin.php");
 
 <?php
 //-- Menu top bar --
-include(SERVER_ROOT."/site/menu.php"); ?>
+include(SERVER_ROOT . "/site/menu.php"); ?>
 
-<?php 
+<?php
 detect_sidebar("header");
 ?>

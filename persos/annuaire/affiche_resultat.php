@@ -1,11 +1,13 @@
 <?php
+
 /**
  * Annuaire des personnages
- * 
+ *
  * @author Simonet Fabrice <aigleblanc@gmail.com>
- * @version 
+ * @version
  * @package annuaire
  */
+
 echo '<h2>Annuaire des personnages EwOiens</h2>
 
 <div align="center">
@@ -19,20 +21,18 @@ echo '<h2>Annuaire des personnages EwOiens</h2>
 		<tr>
 			<td colspan="3" align="center">Matricule : ', $mat, '</td>
 		</tr>';
-if (isset($_SESSION['utilisateur']['id'])){
-		echo '<tr>';
-		if(isset($_SESSION['persos']['current_id'])) {
-			echo '<td align="center">[ <a href="',SERVER_URL,'/messagerie/?id=', $_SESSION['persos']['current_id'], '&dest=', $mat, '">Envoyer un message</a> ]</td>';
-		} else {
-			echo '<td></td>';
-		}
-			
-		echo'	<td align="center">[ <a href="ajout_repertoire.php">Ajouter à mon répertoire</a> ]</td>
+if (isset($_SESSION['utilisateur']['id'])) {
+        echo '<tr>';
+    if (isset($_SESSION['persos']['current_id'])) {
+        echo '<td align="center">[ <a href="',SERVER_URL,'/messagerie/?id=', $_SESSION['persos']['current_id'], '&dest=', $mat, '">Envoyer un message</a> ]</td>';
+    } else {
+        echo '<td></td>';
+    }
+
+        echo'	<td align="center">[ <a href="ajout_repertoire.php">Ajouter à mon répertoire</a> ]</td>
 			<td align="center">[ <a href="',SERVER_URL,'/jeu/classement/position.php?mat=', $mat,'">Voir le classement</a> ]</td>
 		</tr>';
- }
+}
 echo '</table>
 	<p>[<a href="', SERVER_URL, '/persos/annuaire/">Retour</a>]</p>
 </div>';
-
-?>

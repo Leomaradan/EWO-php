@@ -9,54 +9,54 @@ function changeRace() {
 	);
 }
 
-jQuery(window).ready(function() {
-	jQuery("#del").click(function() {
+jQuery(window).ready(function () {
+	jQuery("#del").click(function () {
 		jQuery(this).attr("disabled", "true");
 		jQuery("#confirmDel").slideToggle();
 	});
-	jQuery("#cancel").click(function() {
+	jQuery("#cancel").click(function () {
 		jQuery("#del").removeAttr("disabled");
 		jQuery("#confirmDel").slideToggle();
 	});
 
 	jQuery("#chef").autocomplete({
-		source : "../../ajax/persos.php?race=" + jQuery('#race').val(),
-		delay : 0,
-		minLength : 0,
-		select : function(event, ui) {
+		source: "../../ajax/persos.php?race=" + jQuery('#race').val(),
+		delay: 0,
+		minLength: 0,
+		select: function (event, ui) {
 			if (ui.item) {
 				idSel = ui.item.id;
 				jQuery("#chef_mat").val(idSel);
 			}
 		}
 	});
-	jQuery('#race').change(function(){
+	jQuery('#race').change(function () {
 		changeRace();
 	});
-	
+
 	// Editeur
 	jQuery('#editDescr').ckeditor({
-		toolbar : 'Basic'
+		toolbar: 'Basic'
 	});
 	// Recherche Légion
 	jQuery('#search').autocomplete({
-		source : "../../ajax/legion.php",
-		delay : 0,
-		source : function(request, response) {
+		source: "../../ajax/legion.php",
+		delay: 0,
+		source: function (request, response) {
 			jQuery.getJSON("../../ajax/legion.php", {
-				term : request.term
-			}, function(data) {
-				response(jQuery.map(data, function(item) {
+				term: request.term
+			}, function (data) {
+				response(jQuery.map(data, function (item) {
 					return {
-						label : item.label,
-						value : item.label,
-						model : item.value
+						label: item.label,
+						value: item.label,
+						model: item.value
 					}
 				}));
 			});
 		},
-		minLength : 0,
-		select : function(event, ui) {
+		minLength: 0,
+		select: function (event, ui) {
 			if (ui.item) {
 				if (is_admin) {
 					jQuery("#editName").val(ui.item.model.nom);
@@ -67,10 +67,10 @@ jQuery(window).ready(function() {
 
 				jQuery("#editRace").html(races[ui.item.model.race]);
 				jQuery('#editDescr').val(ui.item.model.descr);
-				jQuery('#editType option').filter(function() {
+				jQuery('#editType option').filter(function () {
 					return jQuery(this).attr('value') == ui.item.model.type;
 				}).attr('selected', true);
-				jQuery('#editAlign option').filter(function() {
+				jQuery('#editAlign option').filter(function () {
 					return jQuery(this).attr('value') == ui.item.model.align;
 				}).attr('selected', true);
 			}

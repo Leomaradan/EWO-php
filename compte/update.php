@@ -35,23 +35,22 @@ if (isset($_GET['action'])) {
             break;
         case 'vacances':
             changeVacances($compte);
-            break;        
+            break;
     }
 }
 
 header('location:../compte/');
 
-function changeEmail($compte) {
+function changeEmail($compte)
+{
     if (isset($_POST['email'])) {
-
         $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
 
         if ($email !== false) {
-
             $compte->email = $email;
 
             //-- PHPBB integration, changement de l'adress mail
-            /* if (!$sql_users = mysql_query("UPDATE phpbb_users SET user_email = '$email' WHERE username = '$utilisateur_name'")) {
+            /* if (!$sql_users = mysqli_query($conn, "UPDATE phpbb_users SET user_email = '$email' WHERE username = '$utilisateur_name'")) {
               echo "erreur d'update dans le forum";
               } */
         } else {
@@ -68,8 +67,9 @@ function changeEmail($compte) {
     }
 }
 
-function changeGrille($compte) {
-    if (isset($_POST['grille']) AND $_POST['grille'] == 'ok') {
+function changeGrille($compte)
+{
+    if (isset($_POST['grille']) and $_POST['grille'] == 'ok') {
         $grille = 1;
     } else {
         $grille = 0;
@@ -79,14 +79,13 @@ function changeGrille($compte) {
     $compte->grille = $grille;
 }
 
-function changePass($compte) {
+function changePass($compte)
+{
 
     if (isset($_POST['pass_modif'])) {
-
         $passencode = $compte->encodePassword($_POST['pass_modif']);
         $compte->passwd = $passencode;
         $compte->passwd_clean = $_POST['pass_modif'];
-		
     } else {
         $titre = "Vous n'êtes pas autorisés à effectuer cette action.";
         $text = "Cet utilisateur n'existe pas.";
@@ -95,7 +94,8 @@ function changePass($compte) {
     }
 }
 
-function changeRedirect($compte) {
+function changeRedirect($compte)
+{
     if (!empty($_POST['redirection'])) {
         $redirection = $_POST['redirection'];
         if ((int) $redirection === 1 || (int) $redirection === 2 || (int) $redirection === 3) {
@@ -114,8 +114,9 @@ function changeRedirect($compte) {
     }
 }
 
-function changeRose($compte) {
-    if (isset($_POST['rose']) AND $_POST['rose'] == '1') {
+function changeRose($compte)
+{
+    if (isset($_POST['rose']) and $_POST['rose'] == '1') {
         $rose = 1;
     } else {
         $rose = 0;
@@ -124,9 +125,9 @@ function changeRose($compte) {
     $compte->rose = $rose;
 }
 
-function changeTemplate($compte) {
+function changeTemplate($compte)
+{
     if (!empty($_POST['template'])) {
-
         if (ctype_alnum($_POST['template'])) {
             $template = $_POST['template'];
             if (is_dir('../template/themes/' . $template)) {
@@ -146,10 +147,10 @@ function changeTemplate($compte) {
     }
 }
 
-function changeVacances($compte) {
+function changeVacances($compte)
+{
 
     if (!empty($_POST['v_action']) && !empty($_POST['check_vacances'])) {
-
         $action = $_POST['v_action'];
 
         $statut = $compte->statutVacances();
@@ -158,7 +159,7 @@ function changeVacances($compte) {
             erreurVacances();
         } else {
             switch ($action) {
-                case 'depart' :
+                case 'depart':
                     //Pour partir il faut être en jeu
                     if ($statut != 'jeu') {
                         erreurVacances();
@@ -166,7 +167,7 @@ function changeVacances($compte) {
                         $compte->departVacances();
                     }
                     break;
-                case 'retour' :
+                case 'retour':
                     //Pour revenir il faut être en vacances
                     if ($statut != 'vacances') {
                         erreurVacances();
@@ -174,7 +175,7 @@ function changeVacances($compte) {
                         $compte->retourVacances();
                     }
                     break;
-                default :
+                default:
                     erreurVacances();
             }
         }
@@ -183,11 +184,10 @@ function changeVacances($compte) {
     }
 }
 
-function erreurVacances() {
+function erreurVacances()
+{
     $titre = "Vacances";
     $text = "Vous n'êtes pas autorisés à effectuer cette action.";
     $lien = "../compte/options.php";
     gestion_erreur($titre, $text, $lien);
 }
-
-?>

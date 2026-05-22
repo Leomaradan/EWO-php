@@ -1,10 +1,10 @@
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     "use strict";
-    jQuery(".deleffect").live('click', function() {
+    jQuery(".deleffect").live('click', function () {
         var element = jQuery(this);
         element.parent().remove();
     });
-    jQuery(".addeffect").click(function(event) {
+    jQuery(".addeffect").click(function (event) {
         if (this.id === 'new_effets_lanceur') {
             var element = jQuery("<tr></tr>");
             var idSelect = 'effet_type_lanceur[' + jQuery('#index_lanceur').val() + ']';
@@ -45,7 +45,7 @@ jQuery(document).ready(function() {
             jQuery('#index_cible').val(1 * jQuery('#index_cible').val() + 1);
         }
     });
-    jQuery('.changeNom').change(function() {
+    jQuery('.changeNom').change(function () {
         //alert("changement");
         if (jQuery(".changeNom:checked").val() === 'simple') {
             jQuery(".nommultiple").hide();

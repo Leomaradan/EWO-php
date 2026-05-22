@@ -1,7 +1,7 @@
 var popupStatus = 0;
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     "use strict";
-    jQuery(".popup").click(function() {
+    jQuery(".popup").click(function () {
         var cle = jQuery(this).attr("id");
         var nom = jQuery(this).html();
         jQuery("#popup > h1").html(nom);
@@ -38,13 +38,13 @@ jQuery(document).ready(function() {
             "left": windowWidth / 2 - popupWidth
         });
     }
-    jQuery("#popupClose").click(function() {
+    jQuery("#popupClose").click(function () {
         disablePopup();
     });
-    jQuery("#popup > input").click(function() {
+    jQuery("#popup > input").click(function () {
         jQuery(this).select();
     });
-    jQuery(document).keypress(function(e) {
+    jQuery(document).keypress(function (e) {
         if (e.keyCode === 27 && popupStatus === 1) {
             disablePopup();
         }

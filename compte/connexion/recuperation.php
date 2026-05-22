@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Connexion - Formulaire de récupération du mot de passe
  *
@@ -6,6 +7,7 @@
  * @version 1.0
  * @package connexion
  */
+
 //-- Header --
 
 require_once __DIR__ . '/../../conf/master.php';
@@ -20,25 +22,25 @@ include(SERVER_ROOT . "/template/header_new.php");
 
 <!-- Debut du coin -->
 <div>
-			<!-- conteneur -->
+            <!-- conteneur -->
 
 <div align='center'>
 <form name='pass' action="recup_password.php" method="post">
 <table>
-	<tr>
-		<td>Votre email : </td>
-		<td><input type="text" name="email" size="20" value="" /></td>
-		<td><input type="submit" value="Envoyer" class="bouton" /></td>
-	</tr>
-	<tr>
-		<td colspan="3">Un email avec un nouveau mot de passe vous sera envoyé.</td>
-	</tr>
+    <tr>
+        <td>Votre email : </td>
+        <td><input type="text" name="email" size="20" value="" /></td>
+        <td><input type="submit" value="Envoyer" class="bouton" /></td>
+    </tr>
+    <tr>
+        <td colspan="3">Un email avec un nouveau mot de passe vous sera envoyé.</td>
+    </tr>
 </table>
 </form>
 </div>
 
 
-			<!-- fin conteneur -->
+            <!-- fin conteneur -->
 </div>
 <!-- Fin du coin -->
 

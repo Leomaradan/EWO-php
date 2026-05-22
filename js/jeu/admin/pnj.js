@@ -1,4 +1,4 @@
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     "use strict";
     jQuery("#actions").tablesorter({
         sortList: [
@@ -11,8 +11,8 @@ jQuery(document).ready(function() {
         size: 25,
         positionFixed: false
     });
-	
-	jQuery(".dialog").on("click", function() {
-		jQuery(this).find(".value").dialog();
-	});	
+
+    jQuery(".dialog").on("click", function () {
+        jQuery(this).find(".value").dialog();
+    });
 });

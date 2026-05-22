@@ -1,7 +1,5 @@
 <?php
 
-namespace jeu\affiliation;
-
 /**
  * Classe abstraite qui permet de gérer les demandes.
  *
@@ -10,9 +8,10 @@ namespace jeu\affiliation;
  * @package legions
  */
 
+namespace jeu\affiliation;
 
-abstract class DemandeManager {
-
+abstract class DemandeManager
+{
     protected $demandes = array();
     protected $sql;
 
@@ -21,15 +20,17 @@ abstract class DemandeManager {
      *
      * @param type $id matricul du supérieur en question
      */
-    public function __construct($id) {
+    public function __construct($id)
+    {
         $this->sql = AffiliationDAO::getInstance();
         $this->loadDemandes($id);
     }
 
 
-    protected abstract function loadDemandes($id);
+    abstract protected function loadDemandes($id);
 
-    public function getDemandes() {
+    public function getDemandes()
+    {
         return $this->demandes;
     }
 
@@ -39,7 +40,8 @@ abstract class DemandeManager {
      *
      * /!\ Ne fait aucune vérification d'unicité, c'est à faire avant l'appel
      */
-    public function addDemande($perso, $sup){
+    public function addDemande($perso, $sup)
+    {
         $this->sql->addAffiliationQuery($sup, $perso);
     }
 
@@ -49,10 +51,8 @@ abstract class DemandeManager {
      * @param type $perso
      * @param type $sup
      */
-    public function supDemande($sup, $perso) {
+    public function supDemande($sup, $perso)
+    {
         $this->sql->supAffiliationQuery($sup, $perso);
     }
-
 }
-
-?>

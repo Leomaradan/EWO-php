@@ -1,18 +1,18 @@
 <?php
 
-namespace jeu\affiliation;
-
 /**
  * Renier un affilié
  * @author Benjamin Herbomez <benjamin.herbomez@gmail.com>
  */
 
+namespace jeu\affiliation;
+
 $errMsg     = '';
 $notifMsg   = '';
 
-if(isset($_POST['mat']) && is_numeric($_POST['mat'])){
+if (isset($_POST['mat']) && is_numeric($_POST['mat'])) {
     $sql    = AffiliationDAO::getInstance();
-    if($sql->isSup($_GET['mat'], $_POST['mat'])){
+    if ($sql->isSup($_GET['mat'], $_POST['mat'])) {
         //Vérifions si le perso est affilié
         $query_alter  = '
             SELECT
@@ -26,22 +26,20 @@ if(isset($_POST['mat']) && is_numeric($_POST['mat'])){
             $stmt->execute(array(
                 ':supId' => $_GET['mat'],
                 ':id'    => $_POST['mat']));
-            $perso = $sql->fetch($stmt,\PDO::FETCH_OBJ);
-            if($perso){
-                $sql->renier($_GET['mat'], $perso->id, $_SESSION['persos']['camp'][$id]);
-                $notifMsg = 'Vous avez renié '.$perso->nom;
+            $perso = $sql->fetch($stmt, \PDO::FETCH_OBJ);
+        if ($perso) {
+            $sql->renier($_GET['mat'], $perso->id, $_SESSION['persos']['camp'][$id]);
+            $notifMsg = 'Vous avez renié ' . $perso->nom;
 
-                if(in_array($perso->id, $_SESSION['persos']['id'])){
-                     $persoId = array_keys($_SESSION['persos']['id'], $perso->id);
-                     $persoId = $persoId[0];
-                     $_SESSION['persos']['superieur'][$persoId] =  null;
-                 }
+            if (in_array($perso->id, $_SESSION['persos']['id'])) {
+                 $persoId = array_keys($_SESSION['persos']['id'], $perso->id);
+                 $persoId = $persoId[0];
+                 $_SESSION['persos']['superieur'][$persoId] =  null;
             }
-            else{
-                $errMsg = 'Ce personnage n\'est pas votre affilié';
-            }
-    }
-    else{
+        } else {
+            $errMsg = 'Ce personnage n\'est pas votre affilié';
+        }
+    } else {
         $errMsg = 'Ce personnage n\'est pas votre affili&eacute;';
     }
 }
@@ -53,16 +51,18 @@ if(isset($_POST['mat']) && is_numeric($_POST['mat'])){
 <form method="post" action="index.php?mat=<?php echo $_GET['mat']?>&amp;p=<?php echo $_GET['p']?>&amp;a=<?php echo $_GET['a']?>" id="form">
     <table class="table-noStyle" >
         <?php
-            if($errMsg != '')
-                echo '
+        if ($errMsg != '') {
+            echo '
         <tr>
             <td colspan="4" style="color:red;">',$errMsg,'</td>
         </tr>';
-            if($notifMsg != '')
-                echo '
+        }
+        if ($notifMsg != '') {
+            echo '
         <tr>
             <td colspan="4" style="color:green;">',$notifMsg,'</td>
         </tr>';
+        }
         ?>
         <tr>
             <th colspan="4" style="text-align:center;">
@@ -93,7 +93,7 @@ if(isset($_POST['mat']) && is_numeric($_POST['mat'])){
 ?>
 <script type="text/javascript">
     <!--
-	var autocomplete_url =  "../../ajax/affi.php?sup=<?php echo $_GET['mat'];?>&";
+    var autocomplete_url =  "../../ajax/affi.php?sup=<?php echo $_GET['mat'];?>&";
     -->
 </script>
 <link rel="stylesheet" href="js/jquery-ui-1.8.17.custom.css" type="text/css" />

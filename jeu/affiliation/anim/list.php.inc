@@ -1,11 +1,11 @@
 <?php
 
-namespace jeu\affiliation;
-
 /**
  *
  * @author Benjamin Herbomez <benjamin.herbomez@gmail.com>
  */
+
+namespace jeu\affiliation;
 
 $sql = AffiliationDAO::getInstance();
 $i = 0;
@@ -17,19 +17,20 @@ echo '
     <table>
         <tr>';
 
-foreach($sql->getAffiList($_GET['mat']) as $perso){
-    if($i%$j == 0){
+foreach ($sql->getAffiList($_GET['mat']) as $perso) {
+    if ($i % $j == 0) {
         echo '<tr>';
     }
     echo '<td style="border-right:0;"><img src="',SERVER_URL,'/images/',icone_persos($perso->id),'" alt="icon perso"/></td>
     <td  style="border-left:0;">
     <a href="',SERVER_URL,'/persos/event/?id=',$perso->id,'">',$perso->nom,'</a>
     (<a href="',SERVER_URL,'/messagerie/index.php?id=',$_GET['mat'],'&dest=',$perso->id,'">',$perso->id,'</a>)</td>';
-     if($i%$j == $j-1){
+    if ($i % $j == $j - 1) {
         echo '</tr>';
     }
     ++$i;
 }
-if($i % $j == 0)
+if ($i % $j == 0) {
     echo '</tr>';
+}
 echo '</table>';

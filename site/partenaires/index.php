@@ -1,7 +1,5 @@
 <?php
 
-namespace site\partenaires;
-
 /**
  * Affiche la liste des partenaires ayant participé a Ewo
  *
@@ -9,6 +7,8 @@ namespace site\partenaires;
  * @version 1.0
  * @package site\partenaires
  */
+
+namespace site\partenaires;
 
 require_once __DIR__ . '/../../conf/master.php';
 
@@ -118,7 +118,7 @@ include(SERVER_ROOT . "/template/header_new.php");
                     <li>- Aigleblanc</li>
                 </ul>
             </li>
-            <li>Programmeurs actifs</li>	
+            <li>Programmeurs actifs</li>    
             <li>
                 <ul>
                     <li>- Aigleblanc</li>
@@ -126,22 +126,22 @@ include(SERVER_ROOT . "/template/header_new.php");
                     <li>- Kazuya</li>
                     <li>- Salelodenouye</li>
                 </ul>
-            </li>	
-            <li>Programmeurs non-actifs</li>	
+            </li>   
+            <li>Programmeurs non-actifs</li>    
             <li>
                 <ul>
                     <li>- Le barge</li>
                     <li>- Schepi</li>
                 </ul>
-            </li>	
-            <li>Designers actifs</li>	
+            </li>   
+            <li>Designers actifs</li>   
             <li>
                 <ul>
                     <li>- Aigleblanc</li>
                     <li>- Francis-</li>
                 </ul>
             </li>
-            <li>Rêgles</li>	
+            <li>Rêgles</li> 
             <li>
                 <ul>
                     <li>- Aigleblanc </li>
@@ -156,7 +156,7 @@ include(SERVER_ROOT . "/template/header_new.php");
 
     <hr class='demon_hr' />
 
-    <div class='cadre2 upperleft'>			
+    <div class='cadre2 upperleft'>          
         <b>- Association EWO 1901 -</b>
 
         <ul>
@@ -171,7 +171,7 @@ include(SERVER_ROOT . "/template/header_new.php");
                 <ul>
                     <li>- ????</li>
                 </ul>
-            </li>		
+            </li>       
             <li>Comptable</li>
             <li>
                 <ul>
@@ -183,7 +183,7 @@ include(SERVER_ROOT . "/template/header_new.php");
                 <ul>
                     <li>- ????</li>
                 </ul>
-            </li>			
+            </li>           
             <li>Membres Actifs</li>
             <li>
                 <ul>
@@ -195,7 +195,7 @@ include(SERVER_ROOT . "/template/header_new.php");
                 <ul>
                     <li>- ????</li>
                 </ul>
-            </li>				
+            </li>               
             <li>Membres</li>
             <li>
                 <ul>

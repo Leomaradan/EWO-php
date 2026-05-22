@@ -1,17 +1,16 @@
 <?php
 
-namespace jeu\affiliation;
-
 /**
  * Gestion des demandes pour un même supérieur
  * @author Benjamin Herbomez <benjamin.herbomez@gmail.com>
  */
 
-/**
- *
- */
-class DemandeSup extends DemandeManager{
-    protected function loadDemandes($id){
+namespace jeu\affiliation;
+
+class DemandeSup extends DemandeManager
+{
+    protected function loadDemandes($id)
+    {
         $query = '
             SELECT
                     wf.vassal       as perso,
@@ -30,9 +29,8 @@ class DemandeSup extends DemandeManager{
             ';
         $stmt = $this->sql->prepare($query);
         $stmt->execute(array(':id' => $id));
-        while($entree = $this->sql->fetch($stmt,\PDO::FETCH_OBJ)){
-            $this->demandes[] = new Demande($entree->perso, $entree->persoNom,$entree->sup, $entree->supNom);
+        while ($entree = $this->sql->fetch($stmt, \PDO::FETCH_OBJ)) {
+            $this->demandes[] = new Demande($entree->perso, $entree->persoNom, $entree->sup, $entree->supNom);
         }
     }
 }
-?>

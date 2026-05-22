@@ -1,17 +1,19 @@
 <?php
 
-namespace compte;
-use conf\Helpers as Helpers;
-
 /**
  * Compte, Index
  *
- * 	Affiche la page principal du compte
+ *  Affiche la page principal du compte
  *
  * @author Simonet Fabrice <aigleblanc@ewo.fr>
  * @version 1.0
  * @package compte
  */
+
+namespace compte;
+
+use conf\Helpers as Helpers;
+
 //-- Header --
 
 require_once __DIR__ . '/../conf/master.php';
@@ -97,7 +99,7 @@ $default_value = '-- Choix --';
                                         ?>
                                         <input type="checkbox" name="grille" value='ok' <?php if ($grille == true) {
                                             echo " checked";
-                                        } ?> />
+                                                                                        } ?> />
                                     </td>
                                     <td><input type="submit" value="Modifier" class="bouton" /></td>
                                 </form>
@@ -137,7 +139,7 @@ $default_value = '-- Choix --';
                                     <th scope="row" align="right">Vacances : </th>
                                         <?php echo $compte->getVacancesButton(); ?>
                                 </form>
-                                </tr>	
+                                </tr>   
                                 <tr>
                                     <td></td>
                                     <td colspan="2"><i>effectif 48 heures après, à heure pile xxh00.</i></td>

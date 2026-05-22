@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Inclusion du footer en fonction de la template
  *
@@ -6,5 +7,5 @@
  * @version 1.0
  * @package template
  */
+
 include(SERVER_ROOT . $template_url . "/footer.php");
-?>

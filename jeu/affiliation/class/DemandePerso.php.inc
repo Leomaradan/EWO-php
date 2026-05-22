@@ -1,20 +1,16 @@
 <?php
 
-namespace jeu\affiliation;
-
 /**
  * Gestion des demandes pour un même perso
  * @author Benjamin Herbomez <benjamin.herbomez@gmail.com>
  */
 
+namespace jeu\affiliation;
 
-/**
- *
- */
-class DemandePerso extends DemandeManager{
-
-
-    protected function loadDemandes($id){
+class DemandePerso extends DemandeManager
+{
+    protected function loadDemandes($id)
+    {
         $query = '
             SELECT
                     wf.vassal       as perso,
@@ -33,9 +29,8 @@ class DemandePerso extends DemandeManager{
             ';
         $stmt = $this->sql->prepare($query);
         $stmt->execute(array(':id' => $id));
-        while($entree = $this->sql->fetch($stmt,\PDO::FETCH_OBJ)){
-            $this->demandes[] = new Demande($entree->perso, $entree->persoNom,$entree->sup, $entree->supNom);
+        while ($entree = $this->sql->fetch($stmt, \PDO::FETCH_OBJ)) {
+            $this->demandes[] = new Demande($entree->perso, $entree->persoNom, $entree->sup, $entree->supNom);
         }
     }
 }
-?>

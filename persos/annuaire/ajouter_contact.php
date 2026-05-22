@@ -4,78 +4,68 @@ namespace persos\annuaire;
 
 /**
  * Ajoute un contact a l'annuaire
- * 
+ *
  * @author Simonet Fabrice <aigleblanc@gmail.com>
- * @version 
+ * @version
  * @package annuaire
  */
 
 //-- Header --
 require_once __DIR__ . '/../../conf/master.php';
 /*-- Connexion basic requise --*/
-ControleAcces('utilisateur',1);
+ControleAcces('utilisateur', 1);
 /*-----------------------------*/
 
 //print_r($_POST);exit;
 
 $conn = AnnuaireDAO::getInstance();
 
-if (isset($_POST['contact']) AND isset($_POST['personnage'])){
+if (isset($_POST['contact']) and isset($_POST['personnage'])) {
+    $perso = $_POST['personnage'];
+    $contact = $_POST['contact'];
 
-	$perso = $_POST['personnage'];
-	$contact = $_POST['contact'];
+    $exist = $conn->persoExist($contact);
 
-	$exist = $conn->persoExist($contact);
+    if ($conn->persoExist($contact)) {
+        if ($conn->AddPersoToRepertoire($perso, $contact) == 1) {
+            $titre = "Votre répertoire";
+            $text = "Votre nouveau contact a bien été ajouté dans votre répertoire.";
+            $lien = "../persos/annuaire";
+            gestion_erreur($titre, $text, $lien);
+        } else {
+            $titre = "Votre répertoire";
+            $text = "Vous avez déjà ce contact dans votre répertoire.";
+            $lien = "../persos/annuaire";
+            gestion_erreur($titre, $text, $lien);
+        }
+    } else {
+        $titre = "Votre répertoire";
+        $text = "Votre contact n'existe pas.";
+        $lien = "../persos/annuaire";
+        gestion_erreur($titre, $text, $lien);
+    }
+} elseif (isset($_GET['id_contact']) and isset($_GET['id_perso'])) {
+    $perso = $_GET['id_perso'];
+    $contact = $_GET['id_contact'];
 
-	if($conn->persoExist($contact)){
-	
-		if($conn->AddPersoToRepertoire($perso, $contact)==1) {
-			$titre = "Votre répertoire";
-			$text = "Votre nouveau contact a bien été ajouté dans votre répertoire.";
-			$lien = "../persos/annuaire";
-			gestion_erreur($titre, $text, $lien);			
-		} else {
-			$titre = "Votre répertoire";
-			$text = "Vous avez déjà ce contact dans votre répertoire.";
-			$lien = "../persos/annuaire";
-			gestion_erreur($titre, $text, $lien);			
-		}
-	} else {
-	
-		$titre = "Votre répertoire";
-		$text = "Votre contact n'existe pas.";
-		$lien = "../persos/annuaire";
-		gestion_erreur($titre, $text, $lien);		
-	
-	}
+    $exist = $conn->persoExist($contact);
 
-} else if(isset($_GET['id_contact']) AND isset($_GET['id_perso'])) {
-
-	$perso = $_GET['id_perso'];
-	$contact = $_GET['id_contact'];
-	
-	$exist = $conn->persoExist($contact);
-
-	if($conn->persoExist($contact)){
-	
-		if($conn->AddPersoToRepertoire($perso, $contact)==1) {
-			$titre = "Votre répertoire";
-			$text = "Votre nouveau contact a bien été ajouté dans votre répertoire.";
-			$lien = "../persos/annuaire";
-			gestion_erreur($titre, $text, $lien);			
-		} else {
-			$titre = "Votre répertoire";
-			$text = "Vous avez déjà ce contact dans votre répertoire.";
-			$lien = "../persos/annuaire";
-			gestion_erreur($titre, $text, $lien);			
-		}
-	} else {
-	
-		$titre = "Votre répertoire";
-		$text = "Votre contact n'existe pas.";
-		$lien = "../persos/annuaire";
-		gestion_erreur($titre, $text, $lien);		
-	
-	}
+    if ($conn->persoExist($contact)) {
+        if ($conn->AddPersoToRepertoire($perso, $contact) == 1) {
+            $titre = "Votre répertoire";
+            $text = "Votre nouveau contact a bien été ajouté dans votre répertoire.";
+            $lien = "../persos/annuaire";
+            gestion_erreur($titre, $text, $lien);
+        } else {
+            $titre = "Votre répertoire";
+            $text = "Vous avez déjà ce contact dans votre répertoire.";
+            $lien = "../persos/annuaire";
+            gestion_erreur($titre, $text, $lien);
+        }
+    } else {
+        $titre = "Votre répertoire";
+        $text = "Votre contact n'existe pas.";
+        $lien = "../persos/annuaire";
+        gestion_erreur($titre, $text, $lien);
+    }
 }
-?>

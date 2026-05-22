@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 --
 
 DELIMITER $$
---
+
 -- Procédures
---
+
 DROP PROCEDURE IF EXISTS `archivage_classements`$$
 CREATE PROCEDURE `archivage_classements`()
 BEGIN
-	REPLACE INTO classement SELECT * FROM classement_view;
+  REPLACE INTO classement SELECT * FROM classement_view;
 END$$
 
 DELIMITER ;

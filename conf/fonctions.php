@@ -1,5 +1,6 @@
 <?php
 
+use conf\ConnecteurDAO;
 use conf\VariableStorage as VariableStorage;
 
 /**
@@ -16,7 +17,8 @@ use conf\VariableStorage as VariableStorage;
  * Gestion du temps de chargement des pages PHP.
  * @return microtime
  */
-function getmicrotime() {
+function getmicrotime()
+{
     list($usec, $sec) = explode(" ", microtime());
     return ((float) $usec + (float) $sec);
 }
@@ -25,14 +27,15 @@ function getmicrotime() {
  * lister les dossier pour trouver les templates
  * @return string $template
  */
-function template_list() {
+function template_list()
+{
 
     $rep = "../template/themes/";
     $dir = opendir($rep);
 
     //les dossiers (is_dir) ou les fichiers (is_file)
     while ($f = readdir($dir)) {
-        if (is_dir($rep . $f) AND $f != '.' AND $f != '..' AND $f != '.svn') {
+        if (is_dir($rep . $f) and $f != '.' and $f != '..' and $f != '.svn') {
             $template[] = $f;
         }
     }
@@ -45,10 +48,14 @@ function template_list() {
  * @param $perso_id
  * @return mail : true or false et type : html ou text
  */
-function mail_defaut($perso_id) {
-    $sql = "SELECT options FROM persos WHERE id = '" . $perso_id . "'";
-    $resultat = mysql_query($sql) or die(mysql_error());
-    $option = mysql_fetch_array($resultat);
+function mail_defaut($perso_id)
+{
+    $dao = ConnecteurDAO::getInstance();
+    $sql = "SELECT options FROM persos WHERE id = ?";
+
+    $dao->prepare($sql);
+    $dao->executePreparedStatement(null, [$perso_id]);
+    $option = $dao->fetchArray();
 
     if ($option[0][4] == "1") {
         $bal_type = 'text';
@@ -61,17 +68,20 @@ function mail_defaut($perso_id) {
     } else {
         $bal_rec = 'false';
     }
-    return $mail = array("mail" => $bal_rec, "type" => $bal_type);
+    return $mail = ["mail" => $bal_rec, "type" => $bal_type];
 }
 
 /**
  * Ajouter la signature par defaut ou non
  * @param $perso_id
  */
-function signature_defaut($perso_id) {
-    $sql = "SELECT options FROM persos WHERE id = '" . $perso_id . "'";
-    $resultat = mysql_query($sql) or die(mysql_error());
-    $signature = mysql_fetch_array($resultat);
+function signature_defaut($perso_id)
+{
+    $dao = ConnecteurDAO::getInstance();
+    $sql = "SELECT options FROM persos WHERE id = ?";
+    $dao->prepare($sql);
+    $dao->executePreparedStatement(null, [$perso_id]);
+    $signature = $dao->fetch();
 
     if ($signature[0][0] == "1") {
         $signature_def = true;
@@ -86,25 +96,26 @@ function signature_defaut($perso_id) {
  * @param $str chaine de caractere a parser
  * @return $str retour de la chaine parser et completer du BBBCODE
  */
-function bbcode_format($str) {
+function bbcode_format($str)
+{
     // Convert all special HTML characters into entities to display literally
     $str = htmlentities($str);
     // The array of regex patterns to look for
-    $format_search = array(
-        '#\[b.*?\](.*?)\[/b.*?\]#is', // Bold ([b]text[/b]
-        '#\[i.*?\](.*?)\[/i.*?\]#is', // Italics ([i]text[/i]
-        '#\[u.*?\](.*?)\[/u.*?\]#is', // Underline ([u]text[/u])
-        '#\[s.*?\](.*?)\[/s.*?\]#is', // Strikethrough ([s]text[/s])
-        '#\[quote.*?\](.*?)\[/quote.*?\]#is', // Quote ([quote]text[/quote])
-        '#\[code.*?\](.*?)\[/code.*?\]#is', // Monospaced code [code]text[/code])
-        '#\[size=([1-9]|1[0-9]|20).*?\](.*?)\[/size.*?\]#is', // Font size 1-20px [size=20]text[/size])
-        '#\[color=\#?([A-F0-9]{3}|[A-F0-9]{6}).*?\](.*?)\[/color.*?\]#is', // Font color ([color=#00F]text[/color])
-        '#\[url=((?:ftp|https?)://.*?).*?\](.*?)\[/url.*?\]#i', // Hyperlink with descriptive text ([url=http://url]text[/url])
-        '#\[url.*?\]((?:ftp|https?)://.*?)\[/url.*?\]#i', // Hyperlink ([url]http://url[/url])
-        '#\[img.*?\](https?://.*?\.(?:jpg|jpeg|gif|png|bmp))\[/img.*?\]#i' // Image ([img]http://url_to_image[/img])
-    );
+    $format_search = [
+        '#\[b.*?\](.*?)\[/b.*?\]#is',                                       // Bold ([b]text[/b]
+        '#\[i.*?\](.*?)\[/i.*?\]#is',                                       // Italics ([i]text[/i]
+        '#\[u.*?\](.*?)\[/u.*?\]#is',                                       // Underline ([u]text[/u])
+        '#\[s.*?\](.*?)\[/s.*?\]#is',                                       // Strikethrough ([s]text[/s])
+        '#\[quote.*?\](.*?)\[/quote.*?\]#is',                               // Quote ([quote]text[/quote])
+        '#\[code.*?\](.*?)\[/code.*?\]#is',                                 // Monospaced code [code]text[/code])
+        '#\[size=([1-9]|1[0-9]|20).*?\](.*?)\[/size.*?\]#is',               // Font size 1-20px [size=20]text[/size])
+        '#\[color=\#?([A-F0-9]{3}|[A-F0-9]{6}).*?\](.*?)\[/color.*?\]#is',  // Font color ([color=#00F]text[/color])
+        '#\[url=((?:ftp|https?)://.*?).*?\](.*?)\[/url.*?\]#i',             // Hyperlink with descriptive text ([url=http://url]text[/url])
+        '#\[url.*?\]((?:ftp|https?)://.*?)\[/url.*?\]#i',                   // Hyperlink ([url]http://url[/url])
+        '#\[img.*?\](https?://.*?\.(?:jpg|jpeg|gif|png|bmp))\[/img.*?\]#i', // Image ([img]http://url_to_image[/img])
+    ];
     // The matching array of strings to replace matches with
-    $format_replace = array(
+    $format_replace = [
         '<strong>$1</strong>',
         '<em>$1</em>',
         '<span style="text-decoration: underline;">$1</span>',
@@ -115,8 +126,8 @@ function bbcode_format($str) {
         '<span style="color: #$1;">$2</span>',
         '<a href="$1">$2</a>',
         '<a href="$1">$1</a>',
-        '<img src="$1" alt="imageForum" />'
-    );
+        '<img src="$1" alt="imageForum" />',
+    ];
     // Perform the actual conversion
     $str = preg_replace($format_search, $format_replace, $str);
     // Convert line breaks in the <br /> tag
@@ -131,12 +142,13 @@ function bbcode_format($str) {
  * @param $lg_max taille du troncage
  * @return $chaine Chaine tronqué a la taille maxi avec '...' rajouté en fin de ligne
  */
-function tronquage($chaine, $lg_max) {
+function tronquage($chaine, $lg_max)
+{
     //$lg_max = 500; //nombre de caractère autoriser
     if (strlen($chaine) > $lg_max) {
-        $chaine = substr($chaine, 0, $lg_max);
+        $chaine     = substr($chaine, 0, $lg_max);
         $last_space = strrpos($chaine, " ");
-        $chaine = substr($chaine, 0, $last_space) . "...";
+        $chaine     = substr($chaine, 0, $last_space) . "...";
     }
     return $chaine;
 }
@@ -148,7 +160,8 @@ function tronquage($chaine, $lg_max) {
  * @param $id_utilisateur ID de l'utilisateur
  * @return $damier_grille true or false en fonction de la réponse
  */
-function grille_damier($id_utilisateur) {
+function grille_damier($id_utilisateur)
+{
     $compte = new compte\Compte($id_utilisateur);
     return $compte->grille;
 }
@@ -160,7 +173,8 @@ function grille_damier($id_utilisateur) {
  * @param $id_utilisateur ID de l'utilisateur
  * @return $damier_rose true or false en fonction de la réponse
  */
-function rose_damier($id_utilisateur) {
+function rose_damier($id_utilisateur)
+{
     $compte = new compte\Compte($id_utilisateur);
     return $compte->rose;
 }
@@ -170,9 +184,10 @@ function rose_damier($id_utilisateur) {
  * @param $id_utilisateur ID de l'utilisateur
  * @return Retourne le lien aprés redirection
  */
-function redirection_connexion($id_utilisateur) {
+function redirection_connexion($id_utilisateur)
+{
     $compte = new compte\Compte($id_utilisateur);
-    $page = $compte->redirection;
+    $page   = $compte->redirection;
 
     if ($page == 1) {
         $redirec = '';
@@ -191,14 +206,15 @@ function redirection_connexion($id_utilisateur) {
  * @param $date Date au format US
  * @return $date_fr Date au format FR
  */
-function date_fr($date) {
-    $date = explode(' ', $date);
-    $year = $date[0];
-    $heure = $date[1];
-    $year = explode('-', $year);
-    $annee = $year[0];
-    $mois = $year[1];
-    $jour = $year[2];
+function date_fr($date)
+{
+    $date    = explode(' ', $date);
+    $year    = $date[0];
+    $heure   = $date[1];
+    $year    = explode('-', $year);
+    $annee   = $year[0];
+    $mois    = $year[1];
+    $jour    = $year[2];
     $date_fr = $jour . '-' . $mois . '-' . $annee . ' ' . $heure;
     return $date_fr;
 }
@@ -208,23 +224,24 @@ function date_fr($date) {
  * @param $date_var Timestamp d'une date
  * @return $date_retour Affiche le nombre de temps depuis la reception d'un bal en , minutes, secondes, heures.
  */
-function date_compare($date_var) {
-    $date = strtotime($date_var);
+function date_compare($date_var)
+{
+    $date          = strtotime($date_var);
     $date_courante = time();
 
     if (floor(($date_courante - $date) / 60) > 59) {
         $moment = floor(($date_courante - $date) / (60 * 60));
-        $sufix = "heures";
+        $sufix  = "heures";
     } elseif (floor(($date_courante - $date)) > 59) {
         $moment = floor(($date_courante - $date) / 60);
-        $sufix = "mins";
+        $sufix  = "mins";
     } else {
         $moment = floor(($date_courante - $date));
-        $sufix = "secs";
+        $sufix  = "secs";
     }
 
     $date_retour['moment'] = $moment;
-    $date_retour['sufix'] = $sufix;
+    $date_retour['sufix']  = $sufix;
 
     return $date_retour;
 }
@@ -235,14 +252,15 @@ function date_compare($date_var) {
  * @param $date Date
  * @return Retourne true ou false en fonction de si le format est correcte ou non
  */
-function is_date($date) {
-    if (!isset($date) || $date == "") {
+function is_date($date)
+{
+    if (! isset($date) || $date == "") {
         return false;
     }
 
     @list($yy, $mm, $dd) = @explode("-", $date);
-    @list($dd, $h) = @explode(" ", $dd);
-    @list($h, $m, $s) = @explode(":", $h);
+    @list($dd, $h)       = @explode(" ", $dd);
+    @list($h, $m, $s)    = @explode(":", $h);
 
     return @checkdate($mm, $dd, $yy) && is_numeric($h) && is_numeric($m) && is_numeric($s);
 }
@@ -252,10 +270,17 @@ function is_date($date) {
  * @param $race ID d'une race
  * @return $nbperso Nombres de personnage inscrit de cette race.
  */
-function statistique_perso_inscrit($race) {
-    $persos = "SELECT count(race_id) AS nbperso FROM persos WHERE race_id=" . $race . "";
-    $resultat = mysql_query($persos) or die(mysql_error());
-    $nbperso = mysql_fetch_array($resultat);
+function statistique_perso_inscrit($race)
+{
+        $dao = ConnecteurDAO::getInstance();
+    $persos   = "SELECT count(race_id) AS nbperso FROM persos WHERE race_id=?";
+
+
+
+            $dao->prepare($persos);
+            $dao->executePreparedStatement(null, [$race]);
+            $nbperso = $dao->fetch();
+
     return $nbperso['nbperso'];
 }
 
@@ -263,10 +288,16 @@ function statistique_perso_inscrit($race) {
  * Statistique sur le nombre de joueur inscrit
  * @return $nbperso Nombre d'utilisateur inscrit sur EWO
  */
-function statistique_joueur_inscrit() {
-    $persos = "SELECT count(id) AS nbjoueur FROM utilisateurs";
-    $resultat = mysql_query($persos) or die(mysql_error());
-    $nbperso = mysql_fetch_array($resultat);
+function statistique_joueur_inscrit()
+{
+    $persos   = "SELECT count(id) AS nbjoueur FROM utilisateurs";
+
+
+           $dao = ConnecteurDAO::getInstance();
+            $dao->prepare($persos);
+            $dao->executePreparedStatement();
+            $nbperso = $dao->fetch();
+
     return $nbperso['nbjoueur'];
 }
 
@@ -280,29 +311,35 @@ function statistique_joueur_inscrit() {
  * @param $plan Id du plan, par defaut -1 si non demandé
  * @return $nbperso Nombre de perso en fonction de la demande
  */
-function statistique_persos_vivant($race, $grade = -1, $plan = -1) {
-    if (isset($race) AND $grade == -1 AND $plan == -1) {
+function statistique_persos_vivant($race, $grade = -1, $plan = -1)
+{
+    if (isset($race) and $grade == -1 and $plan == -1) {
         $persos = "SELECT count(persos.id) AS nbpersos
 						FROM persos
 							INNER JOIN damier_persos
 								ON damier_persos.perso_id = persos.id
 									WHERE persos.race_id = '" . $race . "'";
-    } elseif (isset($race) AND $grade != -1 AND $plan == -1) {
+    } elseif (isset($race) and $grade != -1 and $plan == -1) {
         $persos = "SELECT count(persos.id) AS nbpersos
 						FROM persos
 							INNER JOIN damier_persos
 								ON damier_persos.perso_id = persos.id
 									WHERE persos.race_id = '" . $race . "' AND persos.grade_id='" . $grade . "'";
-    } elseif (isset($race) AND $grade != -1 AND $plan != -1) {
+    } elseif (isset($race) and $grade != -1 and $plan != -1) {
         $persos = "SELECT count(persos.id) AS nbpersos
 						FROM persos
 							INNER JOIN damier_persos
 								ON damier_persos.perso_id = persos.id
 									WHERE persos.race_id = '" . $race . "' AND persos.grade_id='" . $grade . "' AND damier_persos.carte_id = '" . $plan . "'";
+    } else {
+        return 0;
     }
 
-    $resultat = mysql_query($persos) or die(mysql_error());
-    $nbperso = mysql_fetch_array($resultat);
+        $dao = ConnecteurDAO::getInstance();
+
+            $dao->prepare($persos);
+            $dao->executePreparedStatement();
+            $nbperso = $dao->fetch();
 
     return $nbperso['nbpersos'];
 }
@@ -312,12 +349,13 @@ function statistique_persos_vivant($race, $grade = -1, $plan = -1) {
  * @param $id
  * @return $retour Retourne un json_encode() avec 'connexion' 'noconnexion'
  */
-function api_verifconnexion($id) {
-    if (!isset($id)) {
-        echo json_encode(array('statut' => 'noconnexion'));
+function api_verifconnexion($id)
+{
+    if (! isset($id)) {
+        echo json_encode(['statut' => 'noconnexion']);
         exit;
     } else {
-        $retour = array('statut' => 'connexion');
+        $retour = ['statut' => 'connexion'];
         return $retour;
     }
 }
@@ -327,10 +365,16 @@ function api_verifconnexion($id) {
  * @param numeric $id ID du plan
  * @return string $plan Retourne le nom du plan
  */
-function get_plan($id) {
-    $plans = "SELECT nom FROM cartes WHERE id=" . $id . "";
-    $resultat = mysql_query($plans) or die(mysql_error());
-    $plan = mysql_fetch_array($resultat);
+function get_plan($id)
+{
+        $dao = ConnecteurDAO::getInstance();
+    $plans    = "SELECT nom FROM cartes WHERE id=?";
+
+
+            $dao->prepare($plans);
+            $dao->executePreparedStatement(null, [$id]);
+            $plan = $dao->fetch();
+
     return $plan['nom'];
 }
 
@@ -341,7 +385,8 @@ function get_plan($id) {
  * @param $afficheMatricule, par defaut false, si true affiche le matricule de l'objet
  * @return string Nom de l'objet
  */
-function nom_cible($id, $type, $afficheMatricule = false) {
+function nom_cible($id, $type, $afficheMatricule = false)
+{
     if ($type == "persos") {
         return nom_perso($id, $afficheMatricule);
     } elseif ($type == "objet_complexe") {
@@ -365,19 +410,27 @@ function nom_cible($id, $type, $afficheMatricule = false) {
  * @param $afficheMatricule, par defaut false, si true affiche le matricule de l'objet
  * @return string $nom Retourne le nom d'un personnage
  */
-function nom_perso($id, $afficheMatricule = false, $italique = true) {
+function nom_perso($id, $afficheMatricule = false, $italique = true)
+{
+
+    $dao = ConnecteurDAO::getInstance();
+
     if (isset($id) && is_numeric($id)) {
-        $storage_nom = VariableStorage::Consulte('persos.pseudo.' . $id . '.nom');
+        $storage_nom   = VariableStorage::Consulte('persos.pseudo.' . $id . '.nom');
         $storage_titre = VariableStorage::Consulte('persos.pseudo.' . $id . '.titre');
 
-        if (!$storage_nom) {
-            $noms = "SELECT nom, titre FROM persos WHERE id=" . $id . "";
-            $resultat = mysql_query($noms) or die(mysql_error());
-            $nom = mysql_fetch_array($resultat);
-            \conf\VariableStorage::Sauve('persos.pseudo.'.$id.'.nom', $nom['nom'], 60*60);
-            \conf\VariableStorage::Sauve('persos.pseudo.'.$id.'.titre', $nom['titre'], 60*60);
+        if (! $storage_nom) {
+            $noms = "SELECT nom, titre FROM persos WHERE id=?";
+            $dao->prepare($noms);
+            $dao->executePreparedStatement(null, [$id]);
+            $nom = $dao->fetch();
+            if (! $nom) {
+                return '(personnage supprimé)';
+            }
+            \conf\VariableStorage::Sauve('persos.pseudo.' . $id . '.nom', $nom['nom'], 60 * 60);
+            \conf\VariableStorage::Sauve('persos.pseudo.' . $id . '.titre', $nom['titre'], 60 * 60);
         } else {
-            $nom['nom'] = $storage_nom;
+            $nom['nom']   = $storage_nom;
             $nom['titre'] = $storage_titre;
         }
 
@@ -410,10 +463,13 @@ function nom_perso($id, $afficheMatricule = false, $italique = true) {
  * @param $afficheMatricule, par defaut false, si true affiche le matricule de l'objet
  * @return string $nom Retourne le nom de l'action
  */
-function nom_action($id, $afficheMatricule = false) {
-    $noms = "SELECT nom FROM action WHERE id=" . $id . "";
-    $resultat = mysql_query($noms) or die(mysql_error());
-    $nom = mysql_fetch_array($resultat);
+function nom_action($id, $afficheMatricule = false)
+{
+    $noms     = "SELECT nom FROM action WHERE id=?";
+            $dao = ConnecteurDAO::getInstance();
+            $dao->prepare($noms);
+            $dao->executePreparedStatement(null, [$id]);
+            $nom = $dao->fetch();
     if ($afficheMatricule) {
         return $nom['nom'] . "[" . $id . "]";
     } else {
@@ -427,10 +483,13 @@ function nom_action($id, $afficheMatricule = false) {
  * @param $afficheMatricule, par defaut false, si true affiche le matricule de l'objet
  * @return string $nom Retourne le nom d'un objet simple
  */
-function nom_objet_simple($id, $afficheMatricule = false) {
-    $noms = "SELECT nom FROM categorie_objet_simple WHERE id=" . $id . "";
-    $resultat = mysql_query($noms) or die(mysql_error());
-    $nom = mysql_fetch_array($resultat);
+function nom_objet_simple($id, $afficheMatricule = false)
+{
+           $dao = ConnecteurDAO::getInstance();
+    $noms     = "SELECT nom FROM categorie_objet_simple WHERE id=?";
+            $dao->prepare($noms);
+            $dao->executePreparedStatement(null, [$id]);
+            $nom = $dao->fetch();
     if ($afficheMatricule) {
         return $nom['nom'] . "[" . $id . "]";
     } else {
@@ -444,10 +503,14 @@ function nom_objet_simple($id, $afficheMatricule = false) {
  * @param $afficheMatricule, par defaut false, si true affiche le matricule de l'objet
  * @return string $nom Retourne le nom d'un objet complexe
  */
-function nom_objet_complexe($id, $afficheMatricule = false) {
-    $noms = "SELECT nom FROM categorie_objet_complexe WHERE id=" . $id . "";
-    $resultat = mysql_query($noms) or die(mysql_error());
-    $nom = mysql_fetch_array($resultat);
+function nom_objet_complexe($id, $afficheMatricule = false)
+{
+               $dao = ConnecteurDAO::getInstance();
+    $noms     = "SELECT nom FROM categorie_objet_complexe WHERE id=?";
+
+            $dao->prepare($noms);
+            $dao->executePreparedStatement(null, [$id]);
+            $nom = $dao->fetch();
     if ($afficheMatricule) {
         return $nom['nom'] . "[" . $id . "]";
     } else {
@@ -461,10 +524,13 @@ function nom_objet_complexe($id, $afficheMatricule = false) {
  * @param $afficheMatricule, par defaut false, si true affiche le matricule de l'objet
  * @return string $nom Retourne le nom d'une porte
  */
-function nom_porte($id, $afficheMatricule = false) {
-    $noms = "SELECT nom FROM damier_porte WHERE id=" . $id . "";
-    $resultat = mysql_query($noms) or die(mysql_error());
-    $nom = mysql_fetch_array($resultat);
+function nom_porte($id, $afficheMatricule = false)
+{
+    $dao = ConnecteurDAO::getInstance();
+    $noms     = "SELECT nom FROM damier_porte WHERE id=?";
+            $dao->prepare($noms);
+            $dao->executePreparedStatement(null, [$id]);
+            $nom = $dao->fetch();
     if ($afficheMatricule) {
         return $nom['nom'] . "[" . $id . "]";
     } else {
@@ -478,10 +544,13 @@ function nom_porte($id, $afficheMatricule = false) {
  * @param $afficheMatricule, par defaut false, si true affiche le matricule de l'objet
  * @return string $nom Retourne le nom d'un bouclier
  */
-function nom_bouclier($id, $afficheMatricule = false) {
-    $noms = "SELECT nom FROM damier_bouclier WHERE id=" . $id . "";
-    $resultat = mysql_query($noms) or die(mysql_error());
-    $nom = mysql_fetch_array($resultat);
+function nom_bouclier($id, $afficheMatricule = false)
+{
+    $dao = ConnecteurDAO::getInstance();
+    $noms     = "SELECT nom FROM damier_bouclier WHERE id=?";
+            $dao->prepare($noms);
+            $dao->executePreparedStatement(null, [$id]);
+            $nom = $dao->fetch();
     if ($afficheMatricule) {
         return $nom['nom'] . "[" . $id . "]";
     } else {
@@ -495,14 +564,22 @@ function nom_bouclier($id, $afficheMatricule = false) {
  * @param String $nom_race Nom de race personnalisé
  * @return $result Retourne le nom de la race
  */
-function nom_race($race_id, $nom_race = null) {
-    if ($nom_race)
+function nom_race($race_id, $nom_race = null)
+{
+    if ($nom_race) {
         return $nom_race;
+    }
+       $dao = ConnecteurDAO::getInstance();
+
     $sql = "SELECT nom
 		FROM races
-			WHERE race_id=$race_id AND grade_id=-2";
-    $result = mysql_query($sql) or die(mysql_error());
-    $result = mysql_fetch_array($result);
+			WHERE race_id=:race_id AND grade_id=:grade_id LIMIT 1";
+
+
+                        $dao->prepare($sql);
+            $dao->executePreparedStatement(null, [':race_id' => $race_id, ':grade_id' => -2]);
+            $result = $dao->fetch();
+
     return $result['nom'];
 }
 
@@ -511,17 +588,26 @@ function nom_race($race_id, $nom_race = null) {
  * @param $race Id de la race dont on cherche le type de jeu
  * @return Retourne le type de jeu
  */
-function recup_type($race) {
+function recup_type($race)
+{
     if ($race != 0) {
+        $dao = ConnecteurDAO::getInstance();
+
         $sql = "SELECT type
 					FROM races
-						WHERE race_id = $race LIMIT 1";
+						WHERE race_id = :race_id LIMIT 1";
 
-        $reponse = mysql_query($sql) or die(mysql_error());
-        $reponse = mysql_fetch_array($reponse);
+
+
+
+                        $dao->prepare($sql);
+            $dao->executePreparedStatement(null, [':race_id' => $race]);
+            $reponse = $dao->fetch();
+
         return $reponse['type'];
-    }else
+    } else {
         return 3;
+    }
 }
 
 /**
@@ -531,14 +617,20 @@ function recup_type($race) {
  * @param $idutilisateur Id de l'utilisateur si vérification de l'appartenance
  * @return $iduser ou false
  */
-function id_utilisateur($idduperso, $idutilisateur = 'none') {
+function id_utilisateur($idduperso, $idutilisateur = 'none')
+{
     if ($idutilisateur == 'none') {
         $persoid = "SELECT utilisateur_id FROM persos WHERE id='" . $idduperso . "'";
     } else {
         $persoid = "SELECT utilisateur_id FROM persos WHERE id='" . $idduperso . "' AND utilisateur_id='" . $idutilisateur . "'";
     }
-    $result = mysql_query($persoid) or die(mysql_error());
-    $iduser = mysql_fetch_row($result);
+
+    $dao = ConnecteurDAO::getInstance();
+
+            $dao->prepare($persoid);
+            $dao->executePreparedStatement();
+            $iduser = $dao->fetchRow();
+
     if ($iduser != false) {
         return $iduser[0];
     } else {
@@ -552,10 +644,14 @@ function id_utilisateur($idduperso, $idutilisateur = 'none') {
  * @return $mail Retourne le mail de l'utilisateur
  */
 
-function mail_utilisateur($id_utilisateur) {
-    $persoid = "SELECT email FROM utilisateurs WHERE id='" . $id_utilisateur . "'";
-    $result = mysql_query($persoid) or die(mysql_error());
-    $mail = mysql_fetch_row($result);
+function mail_utilisateur($id_utilisateur)
+{
+    $persoid = "SELECT email FROM utilisateurs WHERE id=?";
+
+        $dao = ConnecteurDAO::getInstance();
+            $dao->prepare($persoid);
+            $dao->executePreparedStatement(null, [$id_utilisateur]);
+            $mail = $dao->fetchRow();
     return $mail[0];
 }
 
@@ -563,10 +659,11 @@ function mail_utilisateur($id_utilisateur) {
  * Fonction de controle et de netoyage de chaine
  * $type = num ou char
  */
-function clean_up($var, $type) {
+function clean_up($var, $type)
+{
     switch ($type) {
         //- test si la var est numeric
-        case "num";
+        case "num":
             if (is_numeric($var)) {
                 return $var;
             } else {
@@ -574,14 +671,15 @@ function clean_up($var, $type) {
             }
             break;
         //- test si la var est un char et nettoi les carac
-        case "char";
+        case "char":
             if (is_string($var)) {
+                $conn = bdd_connect("ewo");
                 $var = trim($var);
                 //$var = htmlentities($var);
                 //$var = htmlspecialchars($var);
                 $var = str_replace("/", '', $var);
                 $var = str_replace("\\", '', $var);
-                $var = mysql_real_escape_string($var);
+                $var = mysqli_real_escape_string($conn, $var);
                 return $var;
             } else {
                 return false;
@@ -597,15 +695,16 @@ function clean_up($var, $type) {
  * @param $lien : lien de retour ou doit etre rooter le client par defaut ./news.php
  * @param $redirec Si $redirec est a 1 : redirection javascript, si a 0 redirection php
  */
-function gestion_erreur($titre, $text, $lien, $redirec = 0) {
+function gestion_erreur($titre, $text, $lien, $redirec = 0)
+{
     if (empty($lien)) {
         $lien = './../../..';
     }
     $_SESSION['message']['titre'] = $titre;
-    $_SESSION['message']['text'] = $text;
-    $_SESSION['message']['lien'] = $lien;
-	
-    if ($redirec == 0 && !headers_sent()) {
+    $_SESSION['message']['text']  = $text;
+    $_SESSION['message']['lien']  = $lien;
+
+    if ($redirec == 0 && ! headers_sent()) {
         header("location:" . SERVER_URL . "/msg/message.php");
         exit;
     } else {
@@ -619,11 +718,16 @@ function gestion_erreur($titre, $text, $lien, $redirec = 0) {
  * @param $id ID du personnage.
  * @return $url_icone Retourne lien lien du galon
  */
-function galon_persos($id) {
+function galon_persos($id)
+{
 
-    $sql = "SELECT galon_id, grade_id FROM persos WHERE id = '$id'";
-    $resultat = mysql_query($sql) or die(mysql_error());
-    $carac = mysql_fetch_array($resultat);
+    $sql      = "SELECT galon_id, grade_id FROM persos WHERE id = ?";
+
+
+            $dao = ConnecteurDAO::getInstance();
+            $dao->prepare($sql);
+            $dao->executePreparedStatement(null, [$id]);
+            $carac = $dao->fetch();
 
     $id_galon = $carac['galon_id'];
     $id_grade = $carac['grade_id'];
@@ -634,9 +738,10 @@ function galon_persos($id) {
             $id_galon = ($id_grade - 1) * 4 + $id_galon - 1;
         }
         //-- Selection du galon du persos
-        $sql1 = "SELECT*FROM icone_galons	WHERE id= '$id_galon'";
-        $resultat1 = mysql_query($sql1) or die(mysql_error());
-        $carac = mysql_fetch_array($resultat1);
+        $sql1      = "SELECT*FROM icone_galons	WHERE id= ?";
+            $dao->prepare($sql1);
+            $dao->executePreparedStatement(null, [$id_galon]);
+            $carac = $dao->fetch();
 
         $url_icone = $carac['icone_url'];
     }
@@ -648,44 +753,46 @@ function galon_persos($id) {
  * @param $id_perso ID du personnage.
  * @return $carac Lien de l'icone du personnage
  */
-function icone_persos($id_perso) {
+function icone_persos($id_perso)
+{
 
     $sql = "SELECT persos.icone_id, races.camp_id as camp, races.type as type, persos.grade_id as grade, persos.sexe as sexe, caracs.px as xp
 	FROM persos
 	INNER JOIN races ON (races.race_id = persos.race_id AND persos.grade_id = races.grade_id)
 	INNER JOIN caracs ON (caracs.perso_id = persos.id)
-	WHERE persos.id = $id_perso";
-    $resultat = mysql_query($sql) or die(mysql_error());
-    $carac = mysql_fetch_array($resultat);
+	WHERE persos.id = ?";
+            $dao = ConnecteurDAO::getInstance();
+            $dao->prepare($sql);
+            $dao->executePreparedStatement(null, [$id_perso]);
+            $carac = $dao->fetch();
 
-    if (!empty($carac['icone_id'])) {
+    if (! empty($carac['icone_id'])) {
         // Il y a une icone perso
         $sql = "SELECT icone_url
 						FROM icone_persos
-						WHERE id = " . $carac['icone_id'];
-        $resultat = mysql_query($sql) or die(mysql_error());
-        $icone = mysql_fetch_array($resultat);
+						WHERE id = ?";
+        $dao->prepare($sql);
+        $dao->executePreparedStatement(null, [$carac['icone_id']]);
+        $icone = $dao->fetch();
         return $icone['icone_url'];
     } else {
         // Pas d'icone perso
 
-
-        $xp = $carac['xp'];
-        $camp = $carac['camp'];
-        $type = $carac['type'];
+        $xp    = $carac['xp'];
+        $camp  = $carac['camp'];
+        $type  = $carac['type'];
         $grade = $carac['grade'];
-        $sexe = $carac['sexe'];
-
+        $sexe  = $carac['sexe'];
 
         $sql = "SELECT * FROM icone_persos WHERE
-			camp_id=$camp AND (type = $type OR type = 3) AND
-                (grade_id = $grade OR grade_id = -3) AND (sexe_id = $sexe OR sexe_id = 1) AND
-                xp_min < $xp AND xp_max > $xp";
-        $resultat = mysql_query($sql) or die(mysql_error());
+			camp_id=:camp_id AND (type = :type OR type = 3) AND
+                (grade_id = :grade_id OR grade_id = -3) AND (sexe_id = :sexe_id OR sexe_id = 1) AND
+                xp_min < :xp AND xp_max > :xp";
+        $dao->prepare($sql);
+        $dao->executePreparedStatement(null, [':camp_id' => $camp, ':type' => $type, ':grade_id' => $grade, ':sexe_id' => $sexe, ':xp' => $xp]);
+        $choix = [];
 
-        $choix = array();
-
-        while ($icone = mysql_fetch_array($resultat)) {
+        while ($icone = $dao->fetch()) {
             if ($icone['grade_id'] == $grade && $icone['type'] == $type && $icone['sexe_id'] == $sexe) {
                 // Elle correspond, on la retourne
                 return $icone['icone_url'];
@@ -732,61 +839,14 @@ function icone_persos($id_perso) {
 
         return $url;
     }
-
-
-    /*
-
-      // sexe : (sexe = $sexe OR sexe = 1) ORDER BY sexe ASC
-
-      if(empty($carac['icone_id'])){
-      //-- Selection de l'icone du persos
-      $sql_grade = "SELECT persos.grade_id, persos.race_id
-      FROM persos
-      WHERE persos.id='$id_perso'";
-      $res_grade = mysql_query ($sql_grade) or die (mysql_error());
-      $grade = mysql_fetch_array ($res_grade);
-
-      $race_id = $grade['race_id'];
-      $grade_id = $grade['grade_id'];
-
-      if ($race_id>4){
-      $sql = "SELECT camp_id FROM `races` WHERE race_id=$race_id LIMIT 1 ";
-      $use_race = mysql_query($sql) or die(mysql_error());
-      $use_race = mysql_fetch_array($use_race);
-      $race_id = $use_race['camp_id'];
-      }
-
-      $sql1 = "SELECT C.px
-      FROM caracs C
-      WHERE C.perso_id = '$id_perso'";
-      $resultat1 = mysql_query ($sql1) or die (mysql_error());
-      $carac = mysql_fetch_array ($resultat1);
-      $px = $carac['px'];
-      $sql1 = "SELECT icone_persos.icone_url
-      FROM icone_persos
-      WHERE icone_persos.race_id = $race_id AND icone_persos.grade_id = $grade_id AND ($px BETWEEN icone_persos.xp_min AND icone_persos.xp_max)";
-      $resultat1 = mysql_query ($sql1) or die (mysql_error());
-      $carac = mysql_fetch_array ($resultat1);
-      if (!isset($carac['icone_url']))
-      {
-      $sql1 = "SELECT icone_persos.icone_url
-      FROM icone_persos
-      WHERE icone_persos.race_id = $race_id AND icone_persos.grade_id = 0 AND ($px BETWEEN icone_persos.xp_min AND icone_persos.xp_max)";
-      $resultat1 = mysql_query ($sql1) or die (mysql_error());
-      $carac = mysql_fetch_array ($resultat1);
-      }
-      }else{
-      //-- Selection de l'icone du persos
-
-      }
-      return $carac['icone_url']; */
 }
 
 /**
  * Detecte la présence d'une sidebar dans le dossier courant
  * @param $location header ou autre
  */
-function detect_sidebar($location) {
+function detect_sidebar($location)
+{
     global $template_url;
     global $width;
     global $width_page;
@@ -796,31 +856,29 @@ function detect_sidebar($location) {
         $link = '';
     } else {
         $link = dirname($_SERVER['PHP_SELF']);
-    };
+    }
     $sidebar = $_SERVER['DOCUMENT_ROOT'] . $link . "/sidebar.php";
 
     if (isset($pagetype) && $pagetype == 'accueil') {
         /*
-         *                     
+         *
          */
         if ($location == 'header') {
             echo "<!-- End Header -->
                     <div id='page'>
                             <!-- Start Content -->
                             <div id='content_accueil'>
-                                    
+
                                            ";
-                        } else {
-                            echo "<div class='separation'></div>
+        } else {
+            echo "<div class='separation'></div>
                                             <div class='clear'></div>
                                             </div>
                                     </div>
                             ";
         }
     } else {
-
         if (file_exists($sidebar)) {
-
             if ($location == 'header') {
                 echo "<!-- End Header -->
     <div id='page'>
@@ -828,7 +886,7 @@ function detect_sidebar($location) {
             <div id='content_bg'>
                     <div id='corps'>
                             <div id='colonne'>";
-                include($sidebar);
+                include $sidebar;
                 echo "</div>
                             <div id='content'>";
             } else {
@@ -840,8 +898,6 @@ function detect_sidebar($location) {
     </div>";
             }
         } else {
-
-
             if ($location == 'header') {
                 echo "<!-- End Header -->
                                                             <div id='page' $width_page>
@@ -863,7 +919,8 @@ function detect_sidebar($location) {
  * Detecte la présence d'une sidebar dans le dossier courant
  * @param $location header ou autre
  */
-function detect_sidebar_new($location) {
+function detect_sidebar_new($location)
+{
     global $template_url;
     global $width;
     global $width_page;
@@ -872,22 +929,19 @@ function detect_sidebar_new($location) {
         $link = '';
     } else {
         $link = dirname($_SERVER['PHP_SELF']);
-    };
+    }
     $sidebar = $_SERVER['DOCUMENT_ROOT'] . $link . "/sidebar_new.php";
 
     if (file_exists($sidebar)) {
-
         if ($location == 'header') {
             echo '<div id="sidebar">';
-            include($sidebar);
+            include $sidebar;
             echo '</div>
                     <div id="page" class="pageside">';
         } else {
             echo "</div>";
         }
     } else {
-
-
         if ($location == 'header') {
             echo '<div id="page">';
         } else {
@@ -902,10 +956,12 @@ function detect_sidebar_new($location) {
  * @param $bdd ...
  * @return $retour Retourne la chaine sérialisé
  */
-function seritab($array, $bdd) {
+function seritab($array, $bdd)
+{
+    $conn = bdd_connect("ewo");
     $retour = '';
     foreach ($array as $key => $value) {
-        $retour = $retour . $key . '|' . mysql_real_escape_string($value, $bdd) . '|';
+        $retour = $retour . $key . '|' . mysqli_real_escape_string($conn, $value, $bdd) . '|';
     }
     return $retour;
 }
@@ -915,13 +971,14 @@ function seritab($array, $bdd) {
  * @param string $seriarray Chaine sérialisé
  * @return array $retour Retourne la chaine sous forme d'un array
  */
-function unseritab($seriarray) {
+function unseritab($seriarray)
+{
     $explode = explode('|', $seriarray);
-    $retour = array();
-    $nb = count($explode) - 1;
-    for ($inci = 0; $inci < $nb; $inci+=2) {
-        $key = $explode[$inci];
-        $value = $explode[$inci + 1];
+    $retour  = [];
+    $nb      = count($explode) - 1;
+    for ($inci = 0; $inci < $nb; $inci += 2) {
+        $key          = $explode[$inci];
+        $value        = $explode[$inci + 1];
         $retour[$key] = $value;
     }
     return $retour;
@@ -935,7 +992,8 @@ function unseritab($seriarray) {
  * @param $perso_id
  * @return $resultat Champ voulue
  */
-function recup_record($type, $race, $val = 'none', $perso_id = '') {
+function recup_record($type, $race, $val = 'none', $perso_id = '')
+{
     $regval = "";
     if ($val != 'none') {
         $regval = "AND valeur REGEXP '" . $val . "'";
@@ -951,20 +1009,26 @@ function recup_record($type, $race, $val = 'none', $perso_id = '') {
 							WHERE (record.type='$type' AND record.perso_id=$perso_id $regval)";
     }
 
-    $resultat = mysql_query($sql) or die(mysql_error());
+                $dao = ConnecteurDAO::getInstance();
+    $dao->prepare($sql);
+    $dao->executePreparedStatement(null, [$type, $race, $val, $perso_id]);
+    $resultat = $dao->fetch();
 
-    return $resultat = mysql_fetch_array($resultat);
+    return $resultat;
 }
 
 /**
  * Récupération de tous les record
  * @return $resultat
  */
-function recup_all_record() {
+function recup_all_record()
+{
     $sql = "SELECT *
 			FROM ewo.record";
+                  $dao = ConnecteurDAO::getInstance();
+                  $dao->query($sql);
 
-    $resultat = mysql_query($sql) or die(mysql_error());
+    $resultat = $dao->fetchAll();
     return $resultat;
 }
 
@@ -975,17 +1039,23 @@ function recup_all_record() {
  * @param $valeur valeur a mettre sous forme de tableau sérialisé
  * @return $resultat
  */
-function maj_record($type, $perso_id, $valeur) {
+function maj_record($type, $perso_id, $valeur)
+{
     $sql = "SELECT race_id
                 FROM persos
-                    WHERE id = $perso_id";
+                    WHERE id = ?";
 
-    $reponse = mysql_query($sql) or die(mysql_error());
-    $reponse = mysql_fetch_array($reponse);
-    $race = $reponse['race_id'];
+
+
+                $dao = ConnecteurDAO::getInstance();
+            $dao->prepare($sql);
+            $dao->executePreparedStatement(null, [$perso_id]);
+                       $reponse = $dao->fetch();
+
+    $race    = $reponse['race_id'];
 
     $tabval = unseritab($valeur);
-    $val = 'none';
+    $val    = 'none';
     if (isset($tabval['plan'])) {
         $val = 'plan\\\\|' . $tabval['plan'];
     }
@@ -1010,7 +1080,9 @@ function maj_record($type, $perso_id, $valeur) {
         $sql = "INSERT INTO ewo.record (id, type, perso_id, valeur)
 				VALUES ('','$type','$perso_id','$valeur')";
     }
-    $resultat = mysql_query($sql) or die(mysql_error());
+    $dao = ConnecteurDAO::getInstance();
+    $dao->prepare($sql);
+    $dao->executePreparedStatement();
+     $resultat = $dao->fetch();
+    return $resultat;
 }
-
-?>

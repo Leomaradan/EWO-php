@@ -1,9 +1,9 @@
 <?php
 //-- Header --
 $root_url = "./../..";
-include($root_url."/template/header_new.php");
+include($root_url . "/template/header_new.php");
 /*-- Connexion at ou admin requise --*/
-ControleAcces('admin',1);
+ControleAcces('admin', 1);
 /*-----------------------------*/
 ?>
 
@@ -12,7 +12,7 @@ ControleAcces('admin',1);
 <!-- Debut du coin -->
 <div>
 
-			
+            
 <div class='news' align='center'>
 
 <table>
@@ -20,38 +20,37 @@ ControleAcces('admin',1);
 <?php
 // Paramètres de connexion à la base de données
 
-$logs = "SELECT*FROM logs_admin ORDER BY date DESC LIMIT 0,50";									
-				
+$logs = "SELECT*FROM logs_admin ORDER BY date DESC LIMIT 0,50";
+
 $switch = 0;
-																				
-$resultat = mysql_query ($logs) or die (mysql_error());
-while ($log = mysql_fetch_array ($resultat)){
 
-$utilisateurs = "SELECT nom FROM utilisateurs WHERE id='".$log['admin_id']."'";																		
-$resul = mysql_query ($utilisateurs) or die (mysql_error());
-$user = mysql_fetch_array ($resul);
+$resultat = mysqli_query($conn, $logs) or die(mysqli_error($conn));
+while ($log = mysql_fetch_array($resultat)) {
+    $utilisateurs = "SELECT nom FROM utilisateurs WHERE id='" . $log['admin_id'] . "'";
+    $resul = mysqli_query($conn, $utilisateurs) or die(mysqli_error($conn));
+    $user = mysql_fetch_array($resul);
 
-$personnages = "SELECT nom FROM persos WHERE id='".$log['perso_id']."'";							
-$result = mysql_query ($personnages) or die (mysql_error());
-$users = mysql_fetch_array ($result);
+    $personnages = "SELECT nom FROM persos WHERE id='" . $log['perso_id'] . "'";
+    $result = mysqli_query($conn, $personnages) or die(mysqli_error($conn));
+    $users = mysql_fetch_array($result);
 
 //== modulo pour la couleur
-if (($switch % 2) == 0){
-	$color = '#fff';
-}else{
-	$color = '#CCFF33';
-}
+    if (($switch % 2) == 0) {
+        $color = '#fff';
+    } else {
+        $color = '#CCFF33';
+    }
 
-echo "
+    echo "
 <tr style='background-color:$color;'>
-	<td><a href=''>".$log['date']."</a></td>
-	<td><b><a href=''>".$user['nom']."</a></b> a édité </td>
-	<td><a href=''>".$users['nom']."</a></td>
-	<td>".$log['message']."</td>
+	<td><a href=''>" . $log['date'] . "</a></td>
+	<td><b><a href=''>" . $user['nom'] . "</a></b> a édité </td>
+	<td><a href=''>" . $users['nom'] . "</a></td>
+	<td>" . $log['message'] . "</td>
 </tr>
 ";
 
-$switch++;
+    $switch++;
 } ?>
 </table>
 </div>
@@ -62,6 +61,6 @@ $switch++;
 
 <?php
 //-- Footer --
-include($root_url."/template/footer_new.php");
+include($root_url . "/template/footer_new.php");
 //------------
 ?>

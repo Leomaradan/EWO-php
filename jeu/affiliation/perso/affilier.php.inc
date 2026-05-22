@@ -1,30 +1,29 @@
 <?php
 
-namespace jeu\affiliation;
-
 /**
  *
  * @author Benjamin Herbomez <benjamin.herbomez@gmail.com>
  */
 
+namespace jeu\affiliation;
 
     $sups = Superieurs::getAvailableSup($_SESSION['persos']['camp'][$id]);
 
     include(SERVER_ROOT . '/persos/fonctions.php');
-    
+
     $xp = recup_carac($_GET ['mat'], array('px'));
     $xp = $xp[0];
-    if($xp < 100){
-    	header('location: index.php');
-    	die();
-    }
-    
-    if(isset($_GET['aff']) && is_numeric($_GET['aff']) && array_key_exists($_GET['aff'], $sups)){
-        $sup = $sups[$_GET['aff']];
-        AffiliationDAO::getInstance()->addAffiliationQuery($sup->id, $_GET['mat']);
-        header('location: index.php');
-        die();
-    }
+if ($xp < 100) {
+    header('location: index.php');
+    die();
+}
+
+if (isset($_GET['aff']) && is_numeric($_GET['aff']) && array_key_exists($_GET['aff'], $sups)) {
+    $sup = $sups[$_GET['aff']];
+    AffiliationDAO::getInstance()->addAffiliationQuery($sup->id, $_GET['mat']);
+    header('location: index.php');
+    die();
+}
 ?>
 <h2>S'affilier avec <?php echo $_SESSION['persos']['nom'][$id]; ?></h2>
 <table>
@@ -38,13 +37,14 @@ namespace jeu\affiliation;
     </thead>
     <tbody>
 <?php
-    foreach($sups as $sup){
-        $sexe = 'ce truc';
-        if($sup->sexe == 1)
-            $sexe = 'lui';
-        else if($sup->sexe == 2)
-            $sexe = 'elle';
-        echo '
+foreach ($sups as $sup) {
+    $sexe = 'ce truc';
+    if ($sup->sexe == 1) {
+        $sexe = 'lui';
+    } elseif ($sup->sexe == 2) {
+        $sexe = 'elle';
+    }
+    echo '
         <tr>
             <td><img src="',SERVER_URL,'/images/',icone_persos($sup->id),'" alt="icon perso"/></td>
             <td><a href="',SERVER_URL,'/persos/event/?id=',$sup->id,'">',$sup->id,'</a></td>
@@ -56,7 +56,7 @@ namespace jeu\affiliation;
                 </a>
             </td>
         </tr>';
-    }
+}
 ?>
     </tbody>
 </table>

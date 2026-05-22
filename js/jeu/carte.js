@@ -107,21 +107,21 @@ function setRes() {
 
 function getParamPlan(el) {
     switch (el) {
-    case 'fond_carte_terre':
-        return {
-            'rx': Math.floor(arguments[1] / 2.33 - 150),
-            'ry': Math.floor(arguments[2] / 1.33 - 150)
-        };
-    case 'fond_carte_paradis':
-        return {
-            'rx': Math.floor(arguments[1] / 4 - 50),
-            'ry': Math.floor(arguments[2] / 4 - 100)
-        };
-    case 'fond_carte_enfer':
-        return {
-            'rx': Math.floor(arguments[1] / 4 - 50),
-            'ry': Math.floor(arguments[2] / 4)
-        };
+        case 'fond_carte_terre':
+            return {
+                'rx': Math.floor(arguments[1] / 2.33 - 150),
+                'ry': Math.floor(arguments[2] / 1.33 - 150)
+            };
+        case 'fond_carte_paradis':
+            return {
+                'rx': Math.floor(arguments[1] / 4 - 50),
+                'ry': Math.floor(arguments[2] / 4 - 100)
+            };
+        case 'fond_carte_enfer':
+            return {
+                'rx': Math.floor(arguments[1] / 4 - 50),
+                'ry': Math.floor(arguments[2] / 4)
+            };
     }
 }
 

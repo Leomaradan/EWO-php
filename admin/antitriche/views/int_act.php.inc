@@ -1,11 +1,12 @@
 <?php
-	include_once('ref.php.inc');
 
-	function view_log($at){
-		
-	}
+    include_once('ref.php.inc');
 
-	function content(){
-		return '';
-	}
-?>
+function view_log($at)
+{
+}
+
+function content()
+{
+    return '';
+}
